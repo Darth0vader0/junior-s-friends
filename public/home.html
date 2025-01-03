@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Junior's Friend</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* General Styling */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Navbar Styling */
+        .navbar {
+            background-color: #deeaf6;
+            padding: 17px 20px;
+            position: fixed;
+            /* Sticky navbar */
+            top: 0;
+            width: 100%;
+            z-index: 999;
+        }
+
+        .navbar-brand {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: black;
+        }
+
+        .navbar-nav .nav-link {
+            color: black;
+            margin-left: 20px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #4c6cfc;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            background: url('https://png.pngtree.com/png-vector/20220718/ourlarge/pngtree-multicultural-students-group-student-vector-png-image_5923670.png') no-repeat center center/cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* Overlay for reduced opacity */
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            /* Semi-transparent overlay */
+        }
+
+        .hero .content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            color: white;
+            /* Set text color to white for better contrast */
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: bold;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-top: 20px;
+        }
+
+        .hero .btn {
+            background-color: #ff9800;
+            padding: 10px 30px;
+            margin-top: 20px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+        }
+
+        .hero .btn:hover {
+            background-color: #e68a00;
+        }
+
+        /* About Section */
+        #about {
+            padding: 60px 0;
+            background-color: #f1f1f1;
+            text-align: center;
+        }
+
+        #about h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        #about p {
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 60px 0;
+            background-color: #fff;
+            text-align: center;
+        }
+
+        .features h2 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 40px;
+            color: #007bff;
+        }
+
+        .features .feature-box {
+            margin-bottom: 30px;
+        }
+
+        .features .feature-box h5 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-top: 15px;
+            color: #333;
+        }
+
+        .features .feature-box p {
+            font-size: 1rem;
+            color: #666;
+        }
+
+        /* About Section */
+        #about {
+            padding: 60px 0;
+            background-color: #f1f1f1;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+
+        }
+
+        #about h2 {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #0056b3;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        #about p {
+            font-size: 1.2rem;
+            color: #666;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        /* How It Works Section */
+        .how-it-works {
+            padding: 80px 0;
+            background: linear-gradient(to right, #f7f7f7);
+            text-align: center;
+        }
+
+        .how-it-works h2 {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #0056b3;
+            margin-bottom: 50px;
+        }
+
+        .how-it-works .step {
+            padding: 20px;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .how-it-works .step i {
+            font-size: 3rem;
+            color: #ff9800;
+            margin-bottom: 20px;
+        }
+
+        .how-it-works h5 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .how-it-works p {
+            font-size: 1rem;
+            color: #555;
+        }
+
+        /* Key Features Section */
+        .how-it-works .step:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .key-features {
+            padding: 80px 0;
+            background-color: #fff;
+            text-align: center;
+        }
+
+        .key-features h2 {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 50px;
+            color: #0056b3;
+            text-transform: uppercase;
+        }
+
+        .key-features .feature {
+            margin-bottom: 50px;
+            transition: all 0.3s ease;
+        }
+
+        .key-features .feature i {
+            font-size: 3rem;
+            color: #4c6cfc;
+            margin-bottom: 20px;
+        }
+
+        .key-features h5 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .key-features p {
+            font-size: 1.1rem;
+            color: #666;
+        }
+
+        /* On hover, the feature box zooms slightly */
+        .key-features .feature:hover {
+            transform: scale(1.05);
+        }
+
+        /* Testimonials Section */
+        .testimonials {
+            padding: 80px 0;
+            background-color: #f7f7f7;
+            text-align: center;
+        }
+
+        .testimonials h2 {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 50px;
+            color: #0056b3;
+        }
+
+        .testimonials .testimonial {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .testimonials .testimonial:hover {
+            transform: translateY(-10px);
+        }
+
+        .testimonials .testimonial h5 {
+            margin-top: 20px;
+            font-weight: 600;
+            color: #0056b3;
+            text-transform: uppercase;
+        }
+
+        /* Join the Community Section */
+        .join-community {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #007bff, #007bff);
+            text-align: center;
+            color: white;
+        }
+
+        .join-community h2 {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+        }
+
+        .join-community p {
+            font-size: 1.3rem;
+            color: #ddd;
+            margin-bottom: 40px;
+        }
+
+        .join-community .btn {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            background-color: #ff9800;
+            border: none;
+            border-radius: 50px;
+            color: white;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .join-community .btn:hover {
+            background-color: #e68a00;
+            transform: scale(1.05);
+        }
+
+        /* Join Button Styling */
+        .join-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        #join {
+            border-radius: 15px;
+            width: 90px;
+            height: 40px;
+            background-color: #FF9800;
+            border: none;
+            font-weight: bold;
+            font-size: 16px;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        #join:hover {
+            background-color: #e68a00;
+            transform: scale(1.1);
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f1f1f1;
+            min-width: 140px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            border-radius: 15px;
+        }
+
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .dropdown-content a:hover {
+            border-radius: 15px;
+            background-color: #ddd;
+        }
+
+        .join-dropdown:hover .dropdown-content {
+
+            display: block;
+        }
+
+        /* Footer Styling */
+        footer {
+            background-color: #343a40;
+            color: #fff;
+            padding: 40px 0;
+        }
+
+        footer h5 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        footer a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            color: #ff9800;
+        }
+
+        footer .social-icons a {
+            margin-right: 10px;
+            font-size: 1.5rem;
+        }
+
+        footer .copyright {
+            background-color: #23272b;
+            padding: 10px 0;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        /* Add padding to body to account for sticky navbar */
+        body {
+            padding-top: 80px;
+            /* Ensure content doesn't overlap with navbar */
+        }
+
+        #join {
+            border-radius: 15px;
+            width: 70px;
+            height: 35px;
+            background-color: #FF9800;
+            border: none;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        #join:hover {
+            color: #deeaf6;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="#">Junior's Friend</a>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="books.html">Resources</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="event.html">Events</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="aboutus.html">Contact</a>
+                    </li>
+                    <li>
+                        <a class="nav-link" id="logout">LogOut</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="content">
+            <h1>Welcome to Junior's Friend</h1>
+            <p>Your guide to a successful college journey.</p>
+            <a href="#about" class="btn">Get Started</a>
+        </div>
+    </section>
+
+    <!-- About Section -->
+
+    <!-- About Section -->
+    <section id="about">
+        <div class="container">
+            <h2>About Our Platform</h2>
+            <p>Our mission is to help juniors transition smoothly into college life by offering guidance, study
+                materials, and mentorship from seniors. Connect with a supportive community and make the most of your
+                college journey.</p>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works">
+        <div class="container">
+            <h2>How It Works</h2>
+            <div class="row">
+                <div class="col-md-4 step">
+                    <i class="fas fa-user-plus"></i>
+                    <h5>Sign Up</h5>
+                    <p>Register to get access to all the features and start connecting with seniors.</p>
+                </div>
+                <div class="col-md-4 step">
+                    <i class="fas fa-book"></i>
+                    <h5>Explore Resources</h5>
+                    <p>Find curated study materials and guides provided by seniors and alumni.</p>
+                </div>
+                <div class="col-md-4 step">
+                    <i class="fas fa-comments"></i>
+                    <h5>Connect with Mentors</h5>
+                    <p>Get one-on-one mentorship and guidance from seniors who have been in your shoes.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Key Features Section -->
+    <section class="key-features">
+        <div class="container">
+            <h2>Key Features</h2>
+            <div class="row">
+                <div class="col-md-4 feature">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    <h5>Guidance & Courses</h5>
+                    <p>Access detailed guides and course materials designed to help you succeed.</p>
+                </div>
+                <div class="col-md-4 feature">
+                    <i class="fas fa-graduation-cap"></i>
+                    <h5>Mentorship Program</h5>
+                    <p>Get personal guidance from seniors to help you through your academic journey.</p>
+                </div>
+                <div class="col-md-4 feature">
+                    <i class="fas fa-network-wired"></i>
+                    <h5>Events & Workshops</h5>
+                    <p>Participate in exclusive events and workshops to learn and grow with your peers.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials">
+        <div class="container">
+            <h2>Testimonials</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="testimonial">
+                        <p>"This platform helped me find the best study resources and a mentor who guided me through my
+                            first semester!"</p>
+                        <h5>John Doe, Freshman</h5>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="testimonial">
+                        <p>"I was able to connect with seniors who gave me practical advice on campus life and studies."
+                        </p>
+                        <h5>Jane Smith, Freshman</h5>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="testimonial">
+                        <p>"The resources provided by this platform were a lifesaver during exams."</p>
+                        <h5>Emily Davis, Sophomore</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Join the Community Section -->
+    <section class="join-community">
+        <div class="container">
+            <h2>Join the Community</h2>
+            <p>Ready to get started? Join today and connect with seniors, access study materials, and more!</p>
+            <a href="signup.html" class="btn">Sign Up Now</a>
+        </div>
+    </section>
+
+
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>About Us</h5>
+                    <p>We provide guidance and mentorship to juniors for a smoother college experience.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Quick Links</h5>
+                    <ul>
+                        <li><a href="">Home</a></li>
+                        <li><a href="books.html">Resources</a></li>
+                        <li><a href="event.html">Events</a></li>
+                        <li><a href="aboutus.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Contact Us</h5>
+                    <p>Email: <a href="mailto:info@juniorfriend.com">info@juniorfriend.com</a></p>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2024 Junior's Friend</p>
+        </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+<script>
+    document.getElementById('logout').addEventListener('click', () => {
+        window.location.replace('login.html');
+    });
+</script>
+
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Store</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100">
+    <!-- Container -->
+    <div class="container mx-auto py-10">
+        <!-- Title -->
+        <h1 class="text-3xl font-bold text-center mb-8">Book Store</h1>
+
+        <!-- Search Bar -->
+        <div class="flex justify-between items-center mb-8">
+            <!-- Search Bar -->
+            <input id="searchBar" type="text" placeholder="Search for a book..."
+                class="w-3/4 md:w-1/2 px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+
+            <!-- Post Books Button -->
+            <button class="bg-blue-500 text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-600 transition">
+                <a href="post_book.html" style="text-decoration: none;">POST BOOKS</a>
+            </button>
+        </div>
+
+        <!-- Book List -->
+        <div id="bookList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <!-- Dynamic Content will go here -->
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Fetch books data from the backend
+        async function fetchBooks() {
+            try {
+                const response = await fetch('/api/books');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch books');
+                }
+                const books = await response.json();
+                displayBooks(books);
+            } catch (error) {
+                console.error(error.message);
+            }
+        }
+
+        // Display books dynamically
+        function displayBooks(books) {
+            const bookList = document.getElementById('bookList');
+            bookList.innerHTML = ''; // Clear previous content
+
+            books.forEach(book => {
+                // Create a card
+                const bookCard = document.createElement('div');
+                bookCard.className = 'bg-white rounded-lg shadow-lg overflow-hidden transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl';
+
+                // Card content
+                bookCard.innerHTML = `
+                        <img src="${book.image}" alt="${book.bookname}" class="w-full h-40 object-cover">
+                        <div class="p-4">
+                            <h2 class="text-lg font-bold mb-2">${book.bookname}</h2>
+                            <p class="text-gray-600 mb-2"><strong>Price:</strong>₹ ${book.price}</p>
+                            <p class="text-gray-600 mb-2"><strong>Posted By:</strong> ${book.username}</p>
+                            <p class="text-gray-600 mb-2"><strong>Publication:</strong> ${book.publication}</p>
+                            <p class="text-gray-500 text-sm">${book.description}</p>
+                        </div>
+                    `;
+
+                // Append the card to the list
+                bookList.appendChild(bookCard);
+            });
+        };
+        
+        async function searchFetch() {
+            try {
+                const response = await fetch('/api/books');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch books');
+                }
+                const books = await response.json();
+                return books;
+            } catch (error) {
+                console.error(error.message);
+                return [];
+            }
+        }
+       
+
+        
+
+        const searchBar = document.getElementById('searchBar');
+        searchBar.addEventListener('input', async (e) => {
+            const searchQuery = e.target.value.toLowerCase();
+            const books = await searchFetch();
+            const filteredBooks = books.filter(book =>
+                book.bookname.toLowerCase().includes(searchQuery) || book.description.toLowerCase().includes(searchQuery)
+            );
+            displayBooks(filteredBooks); // Display filtered books
+        });
+
+        // Load books when the page loads
+        document.addEventListener('DOMContentLoaded', fetchBooks);
+    </script>
+</body>
+
+</html>

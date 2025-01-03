@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            /* background-image: url('https://img.freepik.com/premium-vector/business-team-meeting-office-vector-illustration_450176-81.jpg'); */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            font-family: 'Segoe UI', Tahoma, Verdana, sans-serif;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .Econtainer {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            text-align: center;
+            border: 1px solid;
+            border-radius: 15px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 900px;
+        }
+
+        h2 {
+            color: #167ce9;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .textcontent {
+            max-width: 450px;
+            margin-right: 20px;
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+            /* Firefox */
+        }
+
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            /* Chrome, Safari, Edge */
+            margin: 0;
+            /* Remove margin */
+        }
+
+        input {
+            border: 1px solid black;
+            border-radius: 5px;
+            width: 100%;
+            height: 35px;
+            margin-bottom: 15px;
+            padding: 5px;
+            transition: border-color 0.3s ease;
+            /* Smooth transition for border color */
+        }
+
+        /* Custom input focus style */
+        .custom-input:focus {
+            border-color: #007BFF !important;
+            /* Change border color on focus */
+            outline: none;
+            /* Remove the default outline */
+
+            box-shadow: 0 0 0 1px rgba(0, 123, 255, 0.25);
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+            text-align: left;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #167ce9;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #125db2;
+        }
+
+        .img img {
+            max-width: 400px;
+            border-radius: 10px;
+        }
+
+        .textcontent p {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="Econtainer">
+        <div class="textcontent">
+            <h2>Welcome back!</h2>
+            <p>Enter your login credentials.</p>
+            <form action="http://localhost:8000/login" method="post">
+                <div>
+                    <label for="username"><b>Enter Username</b></label>
+                    <input type="text" id="username" name = "UserName" class="custom-input" placeholder="Username" required autocomplete="off">
+                </div>
+                <div>
+                    <label for="otp">Enter Password</label>
+                    <input type="password" id="otp" name = "password" class="custom-input" placeholder="Password" required>
+                </div>
+                <input type="submit" value="login">
+                <a href="forgotpass.html">Forgot Password</a>
+                <div>
+                    <p><a href="signup.html">Don't have an account</a></p>
+                </div>
+        </div>
+        </form>
+        <div class="img">
+            <img src="https://cdni.iconscout.com/illustration/premium/thumb/login-access-protection-illustration-download-in-svg-png-gif-file-formats--password-account-cyber-security-pack-crime-illustrations-4500319.png?f=webp"
+                alt="">
+        </div>
+    </div>
+   
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

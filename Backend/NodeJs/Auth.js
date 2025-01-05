@@ -276,14 +276,16 @@ app.post("/CommentAdd", (req, res) => {
         res.status(200).json({ message: 'comment added succesfully' });
     });
 })
-app.get("/Fetch", (req, res) => {
-    let { BookID } = req.body;
-    if (!BookID) {
-        return res.status(400).json({ message: 'data not proper' });
+app.post("/Fetch", (req, res) => {
+    const BookID = req.body.BookID;
+    const Username = req.body.Username;
+   
+    if (!BookID||!Username) {
+        return res.status(400).json({ message: 'something is missing' });
     }
     // fetch comments order by last most recent comment first
-    const sql = `SELECT * ,CONVERT_TZ(Time, '+00:00', '+05:30') AS created_at_local FROM Comments WHERE BookID = ? ORDER BY Time DESC;`;
-    con.query(sql, ['UXVR'], (err, result) => {
+    const sql = `SELECT * ,CONVERT_TZ(Time, '+00:00', '+05:30') AS created_at_local FROM Comments WHERE BookID = ? AND Username= ? ORDER BY Time DESC;`;
+    con.query(sql, [BookID,Username], (err, result) => {
         if (err) {
             console.log(err);
             return res.status(500).json({ message: 'you already comment' });
@@ -291,7 +293,10 @@ app.get("/Fetch", (req, res) => {
         if (result.length == 0) {
             return res.status(404).json({ message: 'not found comments' });
         }
-        res.json(result);
+        res.json(result.map(row => ({
+            Username: row.username,
+            Comment: row.Comment
+        })));
     })
 })
 con.connect((err) => {

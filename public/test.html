@@ -1,0 +1,34 @@
+<button onclick="fetchdata()">bdccavae</button>
+<script>
+   async function fetchdata() {
+        let comments = [
+            { author: "Alice", text: "This book changed my life!" },
+            { author: "Bob", text: "A must-read for everyone." },
+            { author: "Charlie", text: "Highly recommend this book!" },
+            // Add more comments as needed
+        ];
+
+       let response = await
+                fetch('/Fetch', {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"  // Specify that the request body is in JSON format
+                    },
+                    body: JSON.stringify({  // Convert the object to a JSON string
+                        BookID: "basic drawing",
+                        Username: "smit2398"
+                    })
+                })
+
+        response = await response.json()  // Convert the response body to a JSON object
+        comments.push(response)  // Add the new comment to the comments array
+
+
+            console.log(response)
+            console.log(comments)
+
+       } 
+            
+
+    
+</script>

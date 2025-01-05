@@ -76,39 +76,59 @@
         <!-- Book List -->
         <div id="bookList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             <!-- Dynamic Content will go here --> 
-             <div class="bg-white rounded-lg shadow-lg overflow-hidden transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl">
-                <img src="https://images.unsplash.com/photo-1556740737-768f5f9b9e2f" alt="Book Name" class="w-full h-40 object-cover">
-                <div class="p-4">
-                    <h2 class="text-lg font-bold mb-2">Book Name</h2>
-                    <p class="text-gray-600 mb-2"><strong>Price:</strong> ₹ 200</p>
-                    <p class="text-gray-600 mb-2"><strong>Posted By:</strong> John Doe</p>
-                    <p class="text-gray-600 mb-2"><strong>Publication:</strong> ABC Publications</p>
-                    <p class="text-gray-500 text-sm">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                    <button class="mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg" onclick="toggleCommentBox(this)">Comment</button>
-                </div>
+            <div >
 
-             </div>
-
-   
-        </div>
-         <!-- Comment Modal (Pop-up Box) -->
-    <div id="commentModal" class="flex items-center justify-center">
-        <div id="commentBoxContent" class="transform transition-transform duration-300">
-                <h2 class="text-xl font-bold mb-4">Comments</h2>
-                <button class="close-btn" onclick="closeCommentBox()">&times;</button>
-                <form action="/CommentAdd" method="post">
-                    <textarea
-                        class="w-full h-24 border border-gray-300 rounded-md p-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        name="Comments"
-                        placeholder="Write a comment..."
-                    ></textarea>
-                    <!-- Hidden input to store the Book Name -->
-                    <input type="hidden" id="hiddenBookName" name="BookID" value="">
-                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg">Post Comment</button>
-                </form>
+            </div>
            
         </div>
-    </div>
+         <!-- Comment Modal (Pop-up Box) -->
+   
+         <div id="bookModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+            <div class="bg-white rounded-lg w-11/12 max-w-5xl p-6 relative shadow-lg">
+              <!-- Close Button -->
+              <button
+                class="relative top-4 right-4 text-gray-500 text-2xl font-bold hover:text-gray-700"
+                onclick="closeBookModal()"
+              >
+                &times;
+              </button>
+              <!-- Modal Content -->
+              <div class="flex flex-col md:flex-row gap-6">
+                <!-- Left Section: Book Details -->
+                <div class="flex-1">
+                  <img
+                    src=""
+                    alt="Book Image"
+                    id="bookImage"
+                    class="h-100 rounded-md shadow-md object-cover mb-3"
+                  />
+                  <h1 id="bookName" class="text-2xl font-bold text-blue-500 mb-2"></h1>
+                  <p id="bookPostedBy" class="text-gray-600 mb-2"><strong>Posted By:</strong> </p>
+                  <p id="bookPrice" class="text-gray-600 mb-2"><strong>Price:</strong></p>
+                  <p id="bookPublication" class="text-gray-600 mb-4"><strong>Publication:</strong></p>
+                  <p id="bookDescription" class="text-gray-700 leading-relaxed"></p>
+                </div>
+          
+                <!-- Right Section: Comments -->
+                <div class="flex-1 flex flex-col max-h-96 border border-gray-200 rounded-lg bg-gray-50 p-4">
+                  <h2 class="text-xl font-bold text-blue-500 mb-4">Comments</h2>
+                  <div id="commentsSection" class="flex-1 overflow-y-scroll pr-2 mb-4 scrollbar-hidden">
+                    <!-- Dynamic Comments Will Be Rendered Here -->
+                  </div>
+                  <form action="/CommentAdd" method="post" class="mt-4">
+                    <input
+                      type="text"
+                      class="w-full h-15 border border-gray-300 rounded-md p-2 mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      name="Comments"
+                      placeholder="Write a comment..."
+                    />
+                    <input type="hidden" id="hiddenBookName" name="BookID" value="">
+                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg">Post Comment</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
     </div>
 
     <!-- JavaScript -->
@@ -139,14 +159,24 @@
 
                 // Card content
                 bookCard.innerHTML = `
-                        <img src="${book.image}" alt="${book.bookname}" class="w-full h-40 object-cover">
-                        <div class="p-4">
-                            <h2 class="text-lg font-bold mb-2">${book.bookname}</h2>
-                            <p class="text-gray-600 mb-2"><strong>Price:</strong>₹ ${book.price}</p>
-                            <p class="text-gray-600 mb-2"><strong>Posted By:</strong> ${book.username}</p>
-                            <p class="text-gray-600 mb-2"><strong>Publication:</strong> ${book.publication}</p>
-                            <p class="text-gray-500 text-sm">${book.description}</p>
-                            <button class="mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg" onclick="toggleCommentBox(this)">Comment</button>
+                        <div
+                            class="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg"
+                            data-image="${book.image}"
+                            data-bookname="${book.bookname}"
+                            data-username=" ${book.username}"
+                            data-price="${book.price}"
+                            data-publication="${book.publication}"
+                            data-description="${book.description}"
+                            onclick="handleBookCardClick(this)"
+                            >
+                            <img src="https://via.placeholder.com/300x400" alt="Book" class="w-full h-40 object-cover" />
+                            <div class="p-4">
+                                <h2 class="text-lg font-bold mb-2">${book.bookname}</h2>
+                                <p class="text-gray-600 mb-2"><strong>Price:</strong>₹ ${book.price}</p>
+                                <p class="text-gray-600 mb-2"><strong>Posted By:</strong> ${book.username}</p>
+                                <p class="text-gray-600 mb-2"><strong>Publication:</strong> ${book.publication}</p>
+                                <p class="text-gray-500 text-sm">${book.description}</p>
+                            </div>
                         </div>
                     `;
 
@@ -154,28 +184,71 @@
                 bookList.appendChild(bookCard);
             });
         };
-        function toggleCommentBox(button) {
-            const modal = document.getElementById("commentModal");
-            const content = document.getElementById("commentBoxContent");
-            const hiddenInput = document.getElementById("hiddenBookName");
-
-    // Fetch the book name dynamically from the card
-    const bookNameElement = button.closest(".p-4").querySelector("h2");
-    if (bookNameElement) {
-        hiddenInput.value = bookNameElement.textContent.trim(); // Set the book name
+       
+  
+    function handleBookCardClick(element) {
+      const book = {
+        image: element.dataset.image,
+        bookname: element.dataset.bookname,
+        username: element.dataset.username,
+        price: element.dataset.price,
+        publication: element.dataset.publication,
+        description: element.dataset.description,
+      };
+      openBookModal(book);
     }
+  
+    async function  openBookModal(book) {
+        console.log(book.username)
+        console.log(book.bookname)
+        let response = await
+                fetch('/Fetch', {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"  // Specify that the request body is in JSON format
+                    },
+                    body: JSON.stringify({  // Convert the object to a JSON string
+                        BookID: book.bookname,
+                        Username: book.username
+                    })
+                })
 
-    // Display the modal
-            modal.classList.add("show");
-            content.classList.add("show");
+        response = await response.json()
+        let comments =[];
+        for (let i = 0; i < response.length; i++) {
+            comments.push(response[i]);
         }
+        console.log(comments)
+        
+        document.querySelector("input[name='Comments']").value = '';
 
-        function closeCommentBox() {
-            const modal = document.getElementById("commentModal");
-            const content = document.getElementById("commentBoxContent");
-            modal.classList.remove("show");
-            content.classList.remove("show");
-        }
+      document.getElementById("bookImage").src = "https://via.placeholder.com/300x400";
+      document.getElementById("bookName").textContent = book.bookname;
+      document.getElementById("hiddenBookName").value = book.bookname;
+      document.getElementById("bookPostedBy").innerHTML = `<strong>Posted By:</strong> ${book.username}`;
+      document.getElementById("bookPrice").innerHTML = `<strong>Price:</strong> ₹${book.price}`;
+      document.getElementById("bookPublication").innerHTML = `<strong>Publication:</strong> ${book.publication}`;
+      document.getElementById("bookDescription").textContent = book.description;
+  
+      const commentsSection = document.getElementById("commentsSection");
+      commentsSection.innerHTML = comments
+        .map(
+          (comment) => `
+        <div class="mb-4">
+          <p class="font-bold text-blue-500">${comment.Username}</p>
+          <p class="text-gray-700">${comment.Comment}</p>
+        </div>
+      `
+        )
+        .join("");
+  
+      document.getElementById("bookModal").classList.remove("hidden");
+    }
+  
+    function closeBookModal() {
+        document.querySelector("input[name='Comments']").value = '';
+      document.getElementById("bookModal").classList.add("hidden");
+    }
         async function searchFetch() {
             try {
                 const response = await fetch('/api/books');
@@ -189,10 +262,6 @@
                 return [];
             }
         }
-       
-
-        
-
         const searchBar = document.getElementById('searchBar');
         searchBar.addEventListener('input', async (e) => {
             const searchQuery = e.target.value.toLowerCase();

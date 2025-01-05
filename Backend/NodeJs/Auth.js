@@ -13,6 +13,8 @@ const cors = require('cors'); // Import CORS middleware
 const app = express();
 const cookie = require('cookie-parser')
 app.use(cookie());
+const { v4: uuidv4 } = require('uuid');
+
 let sql = require("mysql");
 const path = require("path");
 const nodemailer = require('nodemailer');
@@ -20,7 +22,6 @@ app.use(express.urlencoded({ extended: true }));
 const port = 8000; // You can use any port you like
 const multer = require('multer');
 const jwt = require('jsonwebtoken')
-// Multer configuration
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 app.use(express.json());
@@ -149,9 +150,8 @@ app.post("/login", (req, res) => {
                         maxAge :10*24*60*60*1000,
                         httpOnly:true,
                     });
-                
-                    res.sendFile("C:/Users/kamal/Desktop/DEproject/dePrototype/public/home.html");
-                    //console.log(req.body);
+                    
+                    res.sendFile("C:/Users/kamal/Desktop/dePrototype/public/home.html");
                 }
             })
         }
@@ -245,8 +245,54 @@ app.post('/save_post',(req, res) => {
     });
 });
 app.get("/home",(req,res)=>{
-    res.sendFile("C:/Users/kamal/Desktop/DEproject/dePrototype/public/home.html");
+    res.sendFile("C:/Users/kamal/Desktop/dePrototype/public/home.html");
 
+})
+
+app.post("/CommentAdd", (req, res) => {
+    //consider name
+    let { BookID, Comments } = req.body;
+    Uname = req.cookies.jwt;
+    const decodeJwt = jwt.verify(Uname, 'secretKey');
+    Uname = decodeJwt.userId;
+    if (!Uname || !Comments) {
+        return res.status(400).json({ message: 'data not proper' });
+    }
+    const CommentID = uuidv4();
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    const localDateTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    const data = [CommentID, Uname, BookID, Comments, localDateTime];
+    const sql = 'INSERT INTO comments (CommentID, UserName,BookID,Comment,Time) VALUES (?, ?, ?, ?,?)';
+    con.query(sql, data, (err, result) => {
+        if (err) {
+            return res.status(500).json({ message: err.message });
+        }
+        res.status(200).json({ message: 'comment added succesfully' });
+    });
+})
+app.get("/Fetch", (req, res) => {
+    let { BookID } = req.body;
+    if (!BookID) {
+        return res.status(400).json({ message: 'data not proper' });
+    }
+    // fetch comments order by last most recent comment first
+    const sql = `SELECT * ,CONVERT_TZ(Time, '+00:00', '+05:30') AS created_at_local FROM Comments WHERE BookID = ? ORDER BY Time DESC;`;
+    con.query(sql, ['UXVR'], (err, result) => {
+        if (err) {
+            console.log(err);
+            return res.status(500).json({ message: 'you already comment' });
+        }
+        if (result.length == 0) {
+            return res.status(404).json({ message: 'not found comments' });
+        }
+        res.json(result);
+    })
 })
 con.connect((err) => {
     if (err) {

@@ -7,6 +7,52 @@
     <title>Book Store</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+          #commentModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        #commentBoxContent {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            transform: translateY(-30px);
+            transition: transform 0.3s ease;
+        }
+
+        #commentModal.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        #commentBoxContent.show {
+            transform: translateY(0);
+        }
+
+        /* Close button style */
+        .close-btn {
+            cursor: pointer;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.5rem;
+            color: #333;
+        }
+    </style>
 </head>
 
 <body class="bg-gray-100">
@@ -29,8 +75,40 @@
 
         <!-- Book List -->
         <div id="bookList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            <!-- Dynamic Content will go here -->
+            <!-- Dynamic Content will go here --> 
+             <div class="bg-white rounded-lg shadow-lg overflow-hidden transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl">
+                <img src="https://images.unsplash.com/photo-1556740737-768f5f9b9e2f" alt="Book Name" class="w-full h-40 object-cover">
+                <div class="p-4">
+                    <h2 class="text-lg font-bold mb-2">Book Name</h2>
+                    <p class="text-gray-600 mb-2"><strong>Price:</strong> ₹ 200</p>
+                    <p class="text-gray-600 mb-2"><strong>Posted By:</strong> John Doe</p>
+                    <p class="text-gray-600 mb-2"><strong>Publication:</strong> ABC Publications</p>
+                    <p class="text-gray-500 text-sm">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                    <button class="mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg" onclick="toggleCommentBox(this)">Comment</button>
+                </div>
+
+             </div>
+
+   
         </div>
+         <!-- Comment Modal (Pop-up Box) -->
+    <div id="commentModal" class="flex items-center justify-center">
+        <div id="commentBoxContent" class="transform transition-transform duration-300">
+                <h2 class="text-xl font-bold mb-4">Comments</h2>
+                <button class="close-btn" onclick="closeCommentBox()">&times;</button>
+                <form action="/CommentAdd" method="post">
+                    <textarea
+                        class="w-full h-24 border border-gray-300 rounded-md p-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        name="Comments"
+                        placeholder="Write a comment..."
+                    ></textarea>
+                    <!-- Hidden input to store the Book Name -->
+                    <input type="hidden" id="hiddenBookName" name="BookID" value="">
+                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg">Post Comment</button>
+                </form>
+           
+        </div>
+    </div>
     </div>
 
     <!-- JavaScript -->
@@ -68,6 +146,7 @@
                             <p class="text-gray-600 mb-2"><strong>Posted By:</strong> ${book.username}</p>
                             <p class="text-gray-600 mb-2"><strong>Publication:</strong> ${book.publication}</p>
                             <p class="text-gray-500 text-sm">${book.description}</p>
+                            <button class="mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg" onclick="toggleCommentBox(this)">Comment</button>
                         </div>
                     `;
 
@@ -75,7 +154,28 @@
                 bookList.appendChild(bookCard);
             });
         };
-        
+        function toggleCommentBox(button) {
+            const modal = document.getElementById("commentModal");
+            const content = document.getElementById("commentBoxContent");
+            const hiddenInput = document.getElementById("hiddenBookName");
+
+    // Fetch the book name dynamically from the card
+    const bookNameElement = button.closest(".p-4").querySelector("h2");
+    if (bookNameElement) {
+        hiddenInput.value = bookNameElement.textContent.trim(); // Set the book name
+    }
+
+    // Display the modal
+            modal.classList.add("show");
+            content.classList.add("show");
+        }
+
+        function closeCommentBox() {
+            const modal = document.getElementById("commentModal");
+            const content = document.getElementById("commentBoxContent");
+            modal.classList.remove("show");
+            content.classList.remove("show");
+        }
         async function searchFetch() {
             try {
                 const response = await fetch('/api/books');

@@ -56,6 +56,7 @@
 </head>
 
 <body class="bg-gray-100">
+ 
     <!-- Container -->
     <div class="container mx-auto py-10">
         <!-- Title -->
@@ -84,13 +85,14 @@
          <!-- Comment Modal (Pop-up Box) -->
    
          <div id="bookModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+         
             <div class="bg-white rounded-lg w-11/12 max-w-5xl p-6 relative shadow-lg">
               <!-- Close Button -->
+              
               <button
-                class="relative top-4 right-4 text-gray-500 text-2xl font-bold hover:text-gray-700"
-                onclick="closeBookModal()"
-              >
-                &times;
+              class="fixed top-4 right-4  text-2xl font-bold bg-white rounded-md hover:text-gray-700"
+              onclick="closeBookModal()"
+            >X
               </button>
               <!-- Modal Content -->
               <div class="flex flex-col md:flex-row gap-6">
@@ -123,6 +125,7 @@
                       placeholder="Write a comment..."
                     />
                     <input type="hidden" id="hiddenBookName" name="BookID" value="">
+                    <input type="hidden" id="hiddenBookPostedByName" name="PostedBy" value="">
                     <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg">Post Comment</button>
                   </form>
                 </div>
@@ -136,7 +139,7 @@
         // Fetch books data from the backend
         async function fetchBooks() {
             try {
-                const response = await fetch('/api/books');
+                const response = await fetch('/books');
                 if (!response.ok) {
                     throw new Error('Failed to fetch books');
                 }
@@ -197,19 +200,20 @@
       };
       openBookModal(book);
     }
-  
+
+// Call this function on every page load
     async function  openBookModal(book) {
         console.log(book.username)
         console.log(book.bookname)
         let response = await
-                fetch('/Fetch', {
+                fetch('/Fetch-comments', {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"  // Specify that the request body is in JSON format
                     },
                     body: JSON.stringify({  // Convert the object to a JSON string
                         BookID: book.bookname,
-                        Username: book.username
+                        PostedBy: book.username
                     })
                 })
 
@@ -225,6 +229,7 @@
       document.getElementById("bookImage").src = "https://via.placeholder.com/300x400";
       document.getElementById("bookName").textContent = book.bookname;
       document.getElementById("hiddenBookName").value = book.bookname;
+      document.getElementById("hiddenBookPostedByName").value = book.username;
       document.getElementById("bookPostedBy").innerHTML = `<strong>Posted By:</strong> ${book.username}`;
       document.getElementById("bookPrice").innerHTML = `<strong>Price:</strong> ₹${book.price}`;
       document.getElementById("bookPublication").innerHTML = `<strong>Publication:</strong> ${book.publication}`;

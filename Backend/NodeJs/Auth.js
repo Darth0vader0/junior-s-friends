@@ -32,6 +32,17 @@ var con = sql.createConnection({
     database: "de_project"
 });
 
+app.get('/jwt',(req,res)=>{
+    token=req.cookies.jwt;
+    console.log(token)
+    res.json(token)
+})
+app.get('/logout',(req,res)=>{
+
+    res.clearCookie('jwt');
+    res.redirect('/login')
+})
+
 app.post("/registration", (req, res) => {
     let data = req.body;
     let a = 0;
@@ -50,7 +61,7 @@ app.post("/registration", (req, res) => {
                         service: 'gmail',
                         auth: {
                             user: '220170116016@vgecg.ac.in',
-                            pass: 'Bg@13572'
+                            pass: 'Bg@13572468'
                         }
                     }
                 );
@@ -81,7 +92,8 @@ app.post("/registration", (req, res) => {
             a = 1;
         }
         if (a === 1) {
-            res.sendFile("C:/Users/HP/Desktop/dePrototype/public/otp.html");
+            res.sendFile("C:/Users/kamal/Desktop/dePrototype/public/otp.html");
+
         }
         else {
             res.send("username already taken please choose another");
@@ -111,11 +123,12 @@ app.post("/otp", (req, res) => {
                 delete temSt8[x];
                 delete temSt9[x];
                 delete temSt10[x];
-                res.sendFile("C:/Users/HP/Desktop/dePrototype/public/home.html");
+                
                 //console.log(req.body);
             }
         });
         //res.send("done");
+        res.redirect('/home')
     }
     else {
         res.send("wrong otp or username");
@@ -151,11 +164,15 @@ app.post("/login", (req, res) => {
                         httpOnly:true,
                     });
                     
-                    res.sendFile("C:/Users/kamal/Desktop/dePrototype/public/home.html");
+                    res.redirect('/home')
                 }
             })
         }
     })
+})
+app.get('/check-logins',(req,res)=>{
+    const jwt = req.cookies.jwt;
+    return jwt? res.json({msg: " okay"}) : res.json({msg : "no"})
 })
 app.post("/forgot", (req, res) => {
     let username = [req.body.username];
@@ -172,15 +189,15 @@ app.post("/forgot", (req, res) => {
             let userData = JSON.parse(x);
             let a = "your account password is " + userData[0].password;
             let mailTransporter =
-                nodemailer.createTransport(
-                    {
-                        service: 'gmail',
-                        auth: {
-                            user: '220170116016@vgecg.ac.in',
-                            pass: 'Bg@13572'
-                        }
+            nodemailer.createTransport(
+                {
+                    service: 'gmail',
+                    auth: {
+                        user: '220170116016@vgecg.ac.in',
+                        pass: 'Bg@13572468'
                     }
-                );
+                }
+            );
             let mailDetails = {
                 from: 'sanskritiratnam@gmail.com',
                 to: userData[0].StuEmail,
@@ -201,14 +218,19 @@ app.post("/forgot", (req, res) => {
     })
 })
 
-app.get('/api/books', (req, res) => {
+
+
+app.get('/books',(req, res) => {
     con.query('SELECT * FROM book', (err, results) => {
         if (err) {
             return res.status(500).send('Error fetching books');
         }
-        res.json(results); // Send results as JSON
+        res.json(results)
     });
+
 });
+
+
 app.post('/save_post',(req, res) => {
     // Use multer to handle file uploads
     upload.single('bookImage')(req, res, (err) => {
@@ -228,10 +250,10 @@ app.post('/save_post',(req, res) => {
             month: '2-digit',
             year: 'numeric',
           })
-        
+          
        
         const sql = `
-            INSERT INTO book (bookName, username,price, description, publication, posted_timestamp)
+        INSERT INTO book (bookName, username,price, description, publication, posted_timestamp)
             VALUES (?, ?, ?, ?,?, ?)
         `;
         con.query(sql, [bookName,username, price, description, publication, posted_timestamp], (err, result) => {
@@ -244,14 +266,11 @@ app.post('/save_post',(req, res) => {
         });
     });
 });
-app.get("/home",(req,res)=>{
-    res.sendFile("C:/Users/kamal/Desktop/dePrototype/public/home.html");
 
-})
 
 app.post("/CommentAdd", (req, res) => {
     //consider name
-    let { BookID, Comments } = req.body;
+    let { BookID, Comments,PostedBy } = req.body;
     Uname = req.cookies.jwt;
     const decodeJwt = jwt.verify(Uname, 'secretKey');
     Uname = decodeJwt.userId;
@@ -267,8 +286,8 @@ app.post("/CommentAdd", (req, res) => {
     const minutes = String(now.getMinutes()).padStart(2, '0');
     const seconds = String(now.getSeconds()).padStart(2, '0');
     const localDateTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-    const data = [CommentID, Uname, BookID, Comments, localDateTime];
-    const sql = 'INSERT INTO comments (CommentID, UserName,BookID,Comment,Time) VALUES (?, ?, ?, ?,?)';
+    const data = [CommentID, Uname, BookID, PostedBy,Comments, localDateTime];
+    const sql = 'INSERT INTO comments (CommentID, UserName,BookID,PostedBy,Comment,Time) VALUES (?, ?, ?,?, ?,?)';
     con.query(sql, data, (err, result) => {
         if (err) {
             return res.status(500).json({ message: err.message });
@@ -276,16 +295,16 @@ app.post("/CommentAdd", (req, res) => {
         res.status(200).json({ message: 'comment added succesfully' });
     });
 })
-app.post("/Fetch", (req, res) => {
+app.post("/Fetch-comments", (req, res) => {
     const BookID = req.body.BookID;
-    const Username = req.body.Username;
+    const PostedBy = req.body.PostedBy;
    
-    if (!BookID||!Username) {
+    if (!BookID||!PostedBy) {
         return res.status(400).json({ message: 'something is missing' });
     }
     // fetch comments order by last most recent comment first
-    const sql = `SELECT * ,CONVERT_TZ(Time, '+00:00', '+05:30') AS created_at_local FROM Comments WHERE BookID = ? AND Username= ? ORDER BY Time DESC;`;
-    con.query(sql, [BookID,Username], (err, result) => {
+    const sql = `SELECT * ,CONVERT_TZ(Time, '+00:00', '+05:30') AS created_at_local FROM Comments WHERE BookID = ? AND PostedBy= ? ORDER BY Time DESC;`;
+    con.query(sql, [BookID,PostedBy], (err, result) => {
         if (err) {
             console.log(err);
             return res.status(500).json({ message: 'you already comment' });
@@ -304,6 +323,18 @@ con.connect((err) => {
         throw err;
     }
     console.log("database done")
+})
+app.get("/login",(req,res)=>{
+    res.sendFile("C:/Users/kamal/Desktop/dePrototype/public/login.html");
+
+})
+app.get("/resources",(req,res)=>{
+    res.sendFile("C:/Users/kamal/Desktop/dePrototype/public/books.html"); // Send results as JSON
+
+})
+app.get("/home",(req,res)=>{
+    res.sendFile("C:/Users/kamal/Desktop/dePrototype/public/home.html");
+
 })
 app.listen(port, () => {
     console.log("server start on port " + port);

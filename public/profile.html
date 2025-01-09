@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Profile</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: "Roboto", sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        /* Header */
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 20px 0;
+        }
+
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        header nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            gap: 20px;
+        }
+
+        header nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        header nav a:hover {
+            text-decoration: underline;
+        }
+
+        /* Profile Card */
+        .profile-card {
+            background-color: white;
+            margin: 50px auto;
+            padding: 30px;
+            max-width: 800px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+            border: 2px solid #007bff;
+        }
+
+        .profile-header {
+            display: flex;
+            gap: 20px;
+        }
+
+        .profile-picture img {
+            border-radius: 50%;
+            width: 150px;
+            height: 150px;
+            box-shadow: 0 2px 4px rgba(0, 123, 255, 0.1);
+            border: 3px solid #007bff;
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-info h2 {
+            margin: 0;
+            font-size: 24px;
+            color: #007bff;
+        }
+
+        .profile-info p {
+            margin: 5px 0;
+            color: #666;
+        }
+
+        .profile-details {
+            margin-top: 20px;
+        }
+
+        .profile-details h3 {
+            margin-top: 20px;
+            font-size: 20px;
+            color: #007bff;
+        }
+
+        .profile-details p {
+            margin: 10px 0;
+            font-size: 16px;
+            color: #555;
+        }
+
+        /* Buttons */
+        .profile-actions {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .profile-actions button {
+            background-color: #e68a00;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+        }
+
+        .profile-actions button:hover {
+            background-color: #ff9900;
+        }
+
+        /* Container */
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .profile-header {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .profile-info {
+                margin-top: 10px;
+                text-align: center;
+            }
+
+            .profile-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .profile-actions button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Student Profile</h1>
+            <nav>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Dashboard</a></li>
+                    <li><a href="#">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="profile-card">
+            <div class="profile-header">
+                <div class="profile-picture">
+                    <img src="https://cdn-icons-png.flaticon.com/128/3177/3177440.png" alt="Student Photo" id="studentPhoto" />
+                </div>
+                <div class="profile-info">
+                    <h2 id="studentName">Name</h2>
+                    <p><strong>Username:</strong> <span id="username"></span></p>
+                    <p><strong>Email:</strong> <span id="studentEmail"></span></p>
+                    <p><strong>Enrollment No:</strong> <span id="enrollmentNo"></span></p>
+                </div>
+            </div>
+
+            <div class="profile-details">
+                <h3>Academic Information</h3>
+                <p><strong>Semester:</strong> <span id="semester"></span></p>
+                <p><strong>Department:</strong> <span id="department"></span></p>
+                <p><strong>City:</strong> <span id="studentCity"></span></p>
+            </div>
+
+            <div class="profile-actions">
+                <button class="btn-message">Message</button>
+            </div>
+        </section>
+    </main>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      
+            window.onload = async function() {
+                const username = localStorage.getItem('commentUsername')
+                const result = await fetch(`/userData`,{
+                    method: 'POST',
+                    body: JSON.stringify({username}),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                const studentData = await result.json()
+        $(document).ready(function() {
+            $('#studentName').text(studentData.StuName);
+            $('#username').text(studentData.Username);
+            $('#studentEmail').text(studentData.StuEmail);
+            $('#enrollmentNo').text(studentData.EnrollmentNo);
+            $('#semester').text(studentData.Semester);
+            $('#department').text(studentData.Department);
+            $('#studentCity').text(studentData.StuCity);
+        });
+                
+            }
+        
+    </script>
+</body>
+</html>

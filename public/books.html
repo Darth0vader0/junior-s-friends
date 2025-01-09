@@ -7,6 +7,7 @@
     <title>Book Store</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/9699ff2ebc.js" crossorigin="anonymous"></script>
     <style>
           #commentModal {
             display: none;
@@ -134,6 +135,21 @@
               </div>
             </div>
           </div>
+
+
+    </div>
+    <div id="loginPlease" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-lg w-11/12 max-w-5xl p-6 relative shadow-lg">
+          <button
+          class="fixed top-4 right-4  text-2xl font-bold bg-white rounded-md hover:text-gray-700"
+          onclick="closeLoginPlease()"
+        >X
+          </button>
+          <h1 class="text-2xl font-bold text-blue-500 mb-2">Login Please</h1>
+          <p class="text-gray-600 mb-2">You need to login to post a comment</p>
+          <a href="/login" class="text-blue-500">Login</a>
+        </div>
+      </div>
     </div>
 
     <!-- JavaScript -->

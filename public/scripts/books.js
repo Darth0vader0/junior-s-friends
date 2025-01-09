@@ -51,8 +51,25 @@ function displayBooks(books) {
     });
 };
 
+function closeLoginPlease() {
+document.getElementById("loginPlease").classList.add("hidden");
+  
+}
+
 
 function handleBookCardClick(element) {
+  const loggedUser = fetch('/check-logins',{
+    method: 'GET',
+    credentials : 'include'
+  }).then(response => response.json());
+
+
+  if(loggedUser == null){
+    document.getElementById("loginPlease").classList.remove("hidden");
+    return;
+
+  }
+
 const book = {
 image: element.dataset.image,
 bookname: element.dataset.bookname,
@@ -101,9 +118,12 @@ const commentsSection = document.getElementById("commentsSection");
 commentsSection.innerHTML = comments
 .map(
   (comment) => `
-<div class="mb-4">
-  <p class="font-bold text-blue-500">${comment.Username}</p>
+<div class="mb-4 flex justify-between">
+  <div>
+   <p class="font-bold text-blue-500 cursor-pointer"  onclick="redirectToUserProfile(this)">${comment.Username}</p>
   <p class="text-gray-700">${comment.Comment}</p>
+  </div>
+  <i class="fa-solid fa-ellipsis-vertical cursor-pointer" ></i>
 </div>
 `
 )
@@ -111,6 +131,14 @@ commentsSection.innerHTML = comments
 
 document.getElementById("bookModal").classList.remove("hidden");
 }
+function redirectToUserProfile(commentUsername) {
+  const username = commentUsername.textContent;
+  console.log(username);
+  localStorage.setItem('commentUsername', username);
+  window.location.href = '/user-profile';
+}
+
+
 
 function closeBookModal() {
 document.querySelector("input[name='Comments']").value = '';
@@ -195,7 +223,8 @@ document.getElementById('commentForm').addEventListener('submit', async (e) => {
     }
   });
 
-  // Function to update the comments section
+
+ 
   function updateCommentsUI(comments) {
     const commentsSection = document.getElementById('commentsSection');
     commentsSection.innerHTML = ''; // Clear existing comments
@@ -205,9 +234,12 @@ document.getElementById('commentForm').addEventListener('submit', async (e) => {
       const commentElement = document.createElement('div');
       commentElement.classList.add('comment');
       commentElement.innerHTML = `
-        <div class="mb-4">
-        <p class="font-bold text-blue-500">${comment.Username}</p>
-        <p class="text-gray-700">${comment.Comment}</p>
+        <div class="mb-4 flex justify-between">
+          <div>
+            <p class="font-bold text-blue-500 cursor-pointer" onclick="redirectToUserProfile(this)">${comment.Username}</p>
+            <p class="text-gray-700">${comment.Comment}</p>
+          </div>
+           <i class="fa-solid fa-ellipsis-vertical cursor-pointer"></i>
         </div>
       `;
       commentsSection.appendChild(commentElement);

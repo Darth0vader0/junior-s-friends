@@ -169,11 +169,41 @@ app.post("/login", (req, res) => {
             })
         }
     })
+});
+app.post("/userData", (req, res) => {
+    const Username = req.body.username;
+    if (!Username) {
+        return res.status(400).json({ message: 'username required' });
+    }
+    const sql = "SELECT * FROM stu_registration Where username = ?";
+    con.query(sql, [Username], (err, result) => {
+        if (err) {
+            console.log(err);
+            return res.status(500).json({ message: 'Server error' });
+        }
+        else if (result.length === 1) {
+           const response= result.map(row => ({
+            
+                StuName: row.StuName,
+                EnrollmentNo: row.EnrollmentNo,
+                StuEmail: row.StuEmail,
+                Semester: row.Semester,
+                Department: row.Department, 
+                StuCity: row.StuCity,                
+                Username: row.Username
+            }));
+            res.json(response[0]);
+        }
+        else {
+            return res.status(500).json({ message: 'Error in database' });
+        }
+    })
 })
 app.get('/check-logins',(req,res)=>{
     const jwt = req.cookies.jwt;
-    return jwt? res.json({msg: " okay"}) : res.json({msg : "no"})
+    return jwt? res.status(200).json({msg: " okay"}) : res.status(400).json({msg : "no"})
 })
+
 app.post("/forgot", (req, res) => {
     let username = [req.body.username];
     q = "SELECT password,StuEmail FROM stu_registration WHERE Username = ? ;";
@@ -331,6 +361,9 @@ app.get("/login",(req,res)=>{
 app.get("/resources",(req,res)=>{
     res.sendFile("C:/Users/kamal/Desktop/dePrototype/public/books.html"); // Send results as JSON
 
+})
+app.get('/user-profile',(req,res)=>{
+    res.sendFile("C:/Users/kamal/Desktop/dePrototype/public/profile.html");
 })
 app.get("/home",(req,res)=>{
     res.sendFile("C:/Users/kamal/Desktop/dePrototype/public/home.html");

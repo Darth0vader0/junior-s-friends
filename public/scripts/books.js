@@ -21,7 +21,7 @@ function displayBooks(books) {
     books.forEach(book => {
         // Create a card
         const bookCard = document.createElement('div');
-        bookCard.className = 'bg-white rounded-lg shadow-lg overflow-hidden transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl';
+        bookCard.className = 'bg-white rounded-lg shadow-lg  transform transition-transform duration-300  hover:shadow-2xl';
 
         // Card content
         bookCard.innerHTML = `
@@ -57,14 +57,16 @@ document.getElementById("loginPlease").classList.add("hidden");
 }
 
 
-function handleBookCardClick(element) {
-  const loggedUser = fetch('/check-logins',{
+async function handleBookCardClick(element) {
+  const auhtenticateUser = await fetch('/check-logins',{
     method: 'GET',
     credentials : 'include'
-  }).then(response => response.json());
+  })
+  const loggedUser = await auhtenticateUser.json();
+  console.log(loggedUser);
+  
 
-
-  if(loggedUser == null){
+  if(loggedUser.msg==="no"){
     document.getElementById("loginPlease").classList.remove("hidden");
     return;
 

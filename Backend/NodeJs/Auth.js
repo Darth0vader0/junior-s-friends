@@ -92,7 +92,7 @@ app.post("/registration", (req, res) => {
             a = 1;
         }
         if (a === 1) {
-            res.sendFile("C:/Users/kamal/Desktop/dePrototype/public/otp.html");
+            res.redirect('/otp');
 
         }
         else {
@@ -158,11 +158,12 @@ app.post("/login", (req, res) => {
                     const userId = req.body.UserName;
                     const token = jwt.sign({userId},"secretKey",{
                     expiresIn:'10d'
-                });
-                    res.cookie("jwt",token,{
+                    
+                     });
+                     res.cookie("jwt",token,{
                         maxAge :10*24*60*60*1000,
                         httpOnly:true,
-                    });
+                    })
                     
                     res.redirect('/home')
                 }
@@ -170,35 +171,7 @@ app.post("/login", (req, res) => {
         }
     })
 });
-app.post("/userData", (req, res) => {
-    const Username = req.body.username;
-    if (!Username) {
-        return res.status(400).json({ message: 'username required' });
-    }
-    const sql = "SELECT * FROM stu_registration Where username = ?";
-    con.query(sql, [Username], (err, result) => {
-        if (err) {
-            console.log(err);
-            return res.status(500).json({ message: 'Server error' });
-        }
-        else if (result.length === 1) {
-           const response= result.map(row => ({
-            
-                StuName: row.StuName,
-                EnrollmentNo: row.EnrollmentNo,
-                StuEmail: row.StuEmail,
-                Semester: row.Semester,
-                Department: row.Department, 
-                StuCity: row.StuCity,                
-                Username: row.Username
-            }));
-            res.json(response[0]);
-        }
-        else {
-            return res.status(500).json({ message: 'Error in database' });
-        }
-    })
-})
+
 app.get('/check-logins',(req,res)=>{
     const jwt = req.cookies.jwt;
     return jwt? res.status(200).json({msg: " okay"}) : res.status(400).json({msg : "no"})
@@ -248,7 +221,7 @@ app.post("/forgot", (req, res) => {
     })
 })
 
-
+// book store apis 
 
 app.get('/books',(req, res) => {
     con.query('SELECT * FROM book', (err, results) => {
@@ -292,12 +265,12 @@ app.post('/save_post',(req, res) => {
             }
 
             console.log('Book posted successfully:', result);
-            res.send('Book posted successfully!');
+            res.redirect('/resources')
         });
     });
 });
 
-
+// comment section 
 app.post("/CommentAdd", (req, res) => {
     //consider name
     let { BookID, Comments,PostedBy } = req.body;
@@ -325,6 +298,7 @@ app.post("/CommentAdd", (req, res) => {
         res.status(200).json({ message: 'comment added succesfully' });
     });
 })
+
 app.post("/Fetch-comments", (req, res) => {
     const BookID = req.body.BookID;
     const PostedBy = req.body.PostedBy;
@@ -348,12 +322,48 @@ app.post("/Fetch-comments", (req, res) => {
         })));
     })
 })
+
+// user-profile redirect .
+
+app.post("/userData", (req, res) => {
+    const Username = req.body.username;
+    if (!Username) {
+        return res.status(400).json({ message: 'username required' });
+    }
+    const sql = "SELECT * FROM stu_registration Where username = ?";
+    con.query(sql, [Username], (err, result) => {
+        if (err) {
+            console.log(err);
+            return res.status(500).json({ message: 'Server error' });
+        }
+        else if (result.length === 1) {
+           const response= result.map(row => ({
+            
+                StuName: row.StuName,
+                EnrollmentNo: row.EnrollmentNo,
+                StuEmail: row.StuEmail,
+                Semester: row.Semester,
+                Department: row.Department, 
+                StuCity: row.StuCity,                
+                Username: row.Username
+            }));
+            res.json(response[0]);
+        }
+        else {
+            return res.status(500).json({ message: 'Error in database' });
+        }
+    })
+})
+
+// database connection 
 con.connect((err) => {
     if (err) {
         throw err;
     }
     console.log("database done")
 })
+
+// routes for url bar to enhance user experience 
 app.get("/login",(req,res)=>{
     res.sendFile("C:/Users/kamal/Desktop/dePrototype/public/login.html");
 
@@ -362,6 +372,7 @@ app.get("/resources",(req,res)=>{
     res.sendFile("C:/Users/kamal/Desktop/dePrototype/public/books.html"); // Send results as JSON
 
 })
+
 app.get('/user-profile',(req,res)=>{
     res.sendFile("C:/Users/kamal/Desktop/dePrototype/public/profile.html");
 })
@@ -369,6 +380,11 @@ app.get("/home",(req,res)=>{
     res.sendFile("C:/Users/kamal/Desktop/dePrototype/public/home.html");
 
 })
+app.get("/otp",(req,res)=>{
+    res.sendFile("C:/Users/kamal/Desktop/dePrototype/public/otp.html")
+});
+
+
 app.listen(port, () => {
     console.log("server start on port " + port);
 })

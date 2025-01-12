@@ -380,6 +380,9 @@ app.get("/home",(req,res)=>{
     res.sendFile("C:/Users/kamal/Desktop/dePrototype/public/home.html");
 
 })
+app.get("/post",(req,res)=>{
+    res.sendFile("C:/Users/kamal/Desktop/dePrototype/public/post_book.html");
+})
 app.get("/otp",(req,res)=>{
     res.sendFile("C:/Users/kamal/Desktop/dePrototype/public/otp.html")
 });

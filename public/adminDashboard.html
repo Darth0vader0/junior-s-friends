@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Junior Friends Admin Profile</title>
+  <style>
+    :root {
+      --primary: #007bff;
+      --secondary: #ff9800;
+      --light-gray: #f8f9fa;
+      --dark-gray: #343a40;
+      --white: #ffffff;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background-color: #f4f6f9;
+      
+    }
+    
+    .container {
+      display: flex;
+      min-height: 100vh;
+    }
+    
+    .sidebar {
+      width: 250px;
+      background-color: var(--dark-gray);
+      color: var(--white);
+      padding: 20px;
+      transition: all 0.3s;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+    
+    .logo-icon {
+      background-color: var(--secondary);
+      color: var(--white);
+      width: 40px;
+      height: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 8px;
+      font-weight: bold;
+      margin-right: 10px;
+    }
+    
+    .logo-text {
+      font-size: 18px;
+      font-weight: bold;
+    }
+    
+    .menu-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 15px;
+      border-radius: 8px;
+      margin-bottom: 5px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .menu-item:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .menu-item.active {
+      background-color: var(--primary);
+    }
+    
+    .menu-icon {
+      margin-right: 10px;
+    }
+    
+    .main-content {
+      flex: 1;
+      padding: 20px;
+    }
+    
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+    
+    .page-title {
+      font-size: 24px;
+      color: var(--dark-gray);
+    }
+    
+    .admin-profile {
+      display: flex;
+      align-items: center;
+    }
+    
+    .admin-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: var(--secondary);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: var(--white);
+      font-weight: bold;
+      margin-right: 10px;
+    }
+    
+    .card {
+      background-color: var(--white);
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .profile-card {
+      display: flex;
+      align-items: flex-start;
+    }
+    
+    .profile-avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background-color: var(--secondary);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: var(--white);
+      font-size: 36px;
+      font-weight: bold;
+      margin-right: 20px;
+    }
+    
+    .profile-details {
+      flex: 1;
+    }
+    
+    .profile-name {
+      font-size: 24px;
+      margin-bottom: 5px;
+    }
+    
+    .profile-role {
+      color: var(--secondary);
+      font-weight: 500;
+      margin-bottom: 15px;
+    }
+    
+    .profile-stats {
+      display: flex;
+      margin-bottom: 20px;
+    }
+    
+    .stat-item {
+      margin-right: 30px;
+    }
+    
+    .stat-value {
+      font-size: 20px;
+      font-weight: bold;
+      color: var(--primary);
+    }
+    
+    .stat-label {
+      font-size: 14px;
+      color: #6c757d;
+    }
+    
+    .calendar-wrapper {
+      margin-top: 30px;
+    }
+    
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .calendar-title {
+      font-size: 18px;
+      font-weight: bold;
+    }
+    
+    .calendar-nav {
+      display: flex;
+      align-items: center;
+    }
+    
+    .nav-button {
+      background-color: var(--light-gray);
+      border: none;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      margin: 0 5px;
+    }
+    
+    .current-month {
+      font-weight: 500;
+      margin: 0 10px;
+    }
+    
+    .calendar {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    .calendar th {
+      padding: 10px;
+      text-align: center;
+      font-weight: 500;
+      color: #6c757d;
+    }
+    
+    .calendar td {
+      padding: 10px;
+      text-align: center;
+      height: 80px;
+      vertical-align: top;
+      border: 1px solid #e9ecef;
+    }
+    
+    .day-number {
+      font-weight: 500;
+      margin-bottom: 5px;
+    }
+    
+    .event {
+      background-color: var(--primary);
+      color: var(--white);
+      padding: 2px 5px;
+      border-radius: 3px;
+      font-size: 12px;
+      margin-bottom: 2px;
+      cursor: pointer;
+      text-align: left;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    
+    .event.orange {
+      background-color: var(--secondary);
+    }
+    
+    .event-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .modal-content {
+      background-color: var(--white);
+      width: 500px;
+      border-radius: 8px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .modal-header {
+      padding: 15px 20px;
+      border-bottom: 1px solid #e9ecef;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .modal-title {
+      font-size: 18px;
+      font-weight: bold;
+    }
+    
+    .close-button {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+    }
+    body.no-scroll {
+    overflow: hidden;
+  }
+    
+    .modal-body {
+      padding: 20px;
+      max-height: 400px; /* Adjust as needed */
+      overflow-y: auto;
+    }
+    
+    .form-group {
+      margin-bottom: 15px;
+    }
+    
+    .form-label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+    
+    .form-input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #ced4da;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    
+    .form-textarea {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #ced4da;
+      border-radius: 4px;
+      font-size: 14px;
+      resize: vertical;
+      min-height: 100px;
+    }
+    
+    .form-select {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #ced4da;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    
+    .modal-footer {
+      padding: 15px 20px;
+      border-top: 1px solid #e9ecef;
+      display: flex;
+      justify-content: flex-end;
+    }
+    
+    .btn {
+      padding: 8px 16px;
+      border-radius: 4px;
+      border: none;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .btn-secondary {
+      background-color: #6c757d;
+      color: var(--white);
+      margin-right: 10px;
+    }
+    
+    .btn-primary {
+      background-color: var(--primary);
+      color: var(--white);
+    }
+    
+    .btn-orange {
+      background-color: var(--secondary);
+      color: var(--white);
+    }
+    
+    .add-event-btn {
+      background-color: var(--secondary);
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      padding: 8px 16px;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .add-event-btn:hover {
+      background-color: #e68a00;
+    }
+    
+    .btn-icon {
+      margin-right: 5px;
+    }
+    
+    .empty-day {
+      background-color: #f8f9fa;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="logo">
+        <div class="logo-icon">JF</div>
+        <div class="logo-text">Junior Friends</div>
+      </div>
+      
+      <div class="menu-item">
+        <span class="menu-icon">📊</span>
+        <span>Dashboard</span>
+      </div>
+      
+      <div class="menu-item active">
+        <span class="menu-icon">👤</span>
+        <span>Profile</span>
+      </div>
+      
+      <div class="menu-item">
+        <span class="menu-icon">📅</span>
+        <span>Events</span>
+      </div>
+      
+      <div class="menu-item">
+        <span class="menu-icon">👥</span>
+        <span>Members</span>
+      </div>
+      
+      <div class="menu-item">
+        <span class="menu-icon">📝</span>
+        <span>Reports</span>
+      </div>
+      
+      <div class="menu-item">
+        <span class="menu-icon">⚙️</span>
+        <span>Settings</span>
+      </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+      <div class="header">
+        <h1 class="page-title">Admin Profile</h1>
+        <div class="admin-profile">
+          <div class="admin-avatar">SR</div>
+          <span>Sarah Robinson</span>
+        </div>
+      </div>
+      
+      <!-- Profile Card -->
+      <div class="card profile-card">
+        <div class="profile-avatar">SR</div>
+        <div class="profile-details">
+          <h2 class="profile-name">Sarah Robinson</h2>
+          <p class="profile-role">Program Administrator</p>
+          
+          <div class="profile-stats">
+            <div class="stat-item">
+              <div class="stat-value">24</div>
+              <div class="stat-label">Events Created</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">156</div>
+              <div class="stat-label">Members</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">89%</div>
+              <div class="stat-label">Participation Rate</div>
+            </div>
+          </div>
+          
+          <p>Passionate about creating meaningful experiences for our junior members. Organizing educational and fun activities since 2020.</p>
+        </div>
+      </div>
+      
+      <!-- Calendar Card -->
+      <div class="card calendar-wrapper">
+        <div class="calendar-header">
+          <h3 class="calendar-title">Event Calendar</h3>
+          <div class="calendar-nav">
+            <button class="nav-button" id="prev-month">◀</button>
+            <div class="current-month" id="current-month">May 2025</div>
+            <button class="nav-button" id="next-month">▶</button>
+            <button class="add-event-btn" id="open-event-modal">
+              <span class="btn-icon">+</span>
+              <span>Add Event</span>
+            </button>
+          </div>
+        </div>
+        
+        <table class="calendar" id="calendar-table">
+          <thead>
+            <tr>
+              <th>Sun</th>
+              <th>Mon</th>
+              <th>Tue</th>
+              <th>Wed</th>
+              <th>Thu</th>
+              <th>Fri</th>
+              <th>Sat</th>
+            </tr>
+          </thead>
+          <tbody id="calendar-body">
+            <!-- Calendar days will be inserted here by JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Add Event Modal -->
+  <div class="event-modal" id="event-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Add New Event</h4>
+        <button class="close-button" id="close-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="event-form">
+          <div class="form-group">
+            <label class="form-label" for="event-title">Event Title</label>
+            <input class="form-input" type="text" id="event-title" required>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="event-date">Date</label>
+            <input class="form-input" type="date" id="event-date" required>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="event-time">Time</label>
+            <input class="form-input" type="time" id="event-time" required>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="event-location">Location</label>
+            <input class="form-input" type="text" id="event-location" required>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="event-description">Description</label>
+            <textarea class="form-textarea" id="event-description" required></textarea>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="event-category">Category</label>
+            <select class="form-select" id="event-category" required>
+              <option value="">Select Category</option>
+              <option value="educational">Educational</option>
+              <option value="sports">Sports</option>
+              <option value="arts">Arts & Crafts</option>
+              <option value="outdoors">Outdoors</option>
+              <option value="social">Social</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="event-color">Color</label>
+            <select class="form-select" id="event-color" required>
+              <option value="blue">Blue (#007bff)</option>
+              <option value="orange">Orange (#ff9800)</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancel-event">Cancel</button>
+        <button class="btn btn-orange" id="save-event">Save Event</button>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Calendar functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize variables
+      let currentDate = new Date();
+      let currentYear = currentDate.getFullYear();
+      let currentMonth = currentDate.getMonth();
+      
+      // Sample events data
+      let events = [
+        { id: 1, title: "Art Workshop", date: new Date(2025, 4, 5), category: "arts", color: "orange" },
+        { id: 2, title: "Science Fair", date: new Date(2025, 4, 10), category: "educational", color: "blue" },
+        { id: 3, title: "Soccer Practice", date: new Date(2025, 4, 15), category: "sports", color: "blue" },
+        { id: 4, title: "Movie Night", date: new Date(2025, 4, 20), category: "social", color: "orange" },
+        { id: 5, title: "Park Cleanup", date: new Date(2025, 4, 25), category: "outdoors", color: "blue" }
+      ];
+      
+      // DOM elements
+      const calendarBody = document.getElementById('calendar-body');
+      const currentMonthElement = document.getElementById('current-month');
+      const prevMonthButton = document.getElementById('prev-month');
+      const nextMonthButton = document.getElementById('next-month');
+      const eventModal = document.getElementById('event-modal');
+      const openEventModalButton = document.getElementById('open-event-modal');
+      const closeModalButton = document.getElementById('close-modal');
+      const cancelEventButton = document.getElementById('cancel-event');
+      const saveEventButton = document.getElementById('save-event');
+      const eventForm = document.getElementById('event-form');
+      
+      // Generate calendar
+      function generateCalendar(year, month) {
+        // Clear previous calendar
+        calendarBody.innerHTML = '';
+        
+        // Update header
+        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        currentMonthElement.textContent = `${monthNames[month]} ${year}`;
+        
+        // Get first day of month and total days
+        const firstDay = new Date(year, month, 1).getDay();
+        const totalDays = new Date(year, month + 1, 0).getDate();
+        
+        // Calculate needed rows
+        const rows = Math.ceil((firstDay + totalDays) / 7);
+        
+        let date = 1;
+        
+        // Generate rows and cells
+        for (let i = 0; i < rows; i++) {
+          const row = document.createElement('tr');
+          
+          // Generate 7 cells for each row
+          for (let j = 0; j < 7; j++) {
+            const cell = document.createElement('td');
+            
+            if (i === 0 && j < firstDay) {
+              // Empty cells before the first day
+              cell.classList.add('empty-day');
+              row.appendChild(cell);
+            } else if (date > totalDays) {
+              // Empty cells after the last day
+              cell.classList.add('empty-day');
+              row.appendChild(cell);
+            } else {
+              // Regular day cells
+              const dayNumber = document.createElement('div');
+              dayNumber.classList.add('day-number');
+              dayNumber.textContent = date;
+              cell.appendChild(dayNumber);
+              
+              // Check if any events are on this day
+              const dayEvents = events.filter(event => {
+                return event.date.getDate() === date && 
+                       event.date.getMonth() === month && 
+                       event.date.getFullYear() === year;
+              });
+              
+              // Add events to the day cell
+              dayEvents.forEach(event => {
+                const eventDiv = document.createElement('div');
+                eventDiv.classList.add('event');
+                if (event.color === 'orange') {
+                  eventDiv.classList.add('orange');
+                }
+                eventDiv.textContent = event.title;
+                eventDiv.dataset.id = event.id;
+                cell.appendChild(eventDiv);
+                
+                // Event click handler (for demonstration)
+                eventDiv.addEventListener('click', function(e) {
+                  e.stopPropagation();
+                  alert(`Event: ${event.title}\nDate: ${event.date.toLocaleDateString()}\nCategory: ${event.category}`);
+                });
+              });
+              
+              // Add cell click handler to add event
+              cell.addEventListener('click', function() {
+                openEventModal(new Date(year, month, date));
+              });
+              
+              row.appendChild(cell);
+              date++;
+            }
+          }
+          
+          calendarBody.appendChild(row);
+          
+          // Stop generating rows if we've used all dates
+          if (date > totalDays) {
+            break;
+          }
+        }
+      }
+      
+      // Initialize calendar
+      generateCalendar(currentYear, currentMonth);
+      
+      // Previous month button
+      prevMonthButton.addEventListener('click', function() {
+        currentMonth--;
+        if (currentMonth < 0) {
+          currentMonth = 11;
+          currentYear--;
+        }
+        generateCalendar(currentYear, currentMonth);
+      });
+      
+      // Next month button
+      nextMonthButton.addEventListener('click', function() {
+        currentMonth++;
+        if (currentMonth > 11) {
+          currentMonth = 0;
+          currentYear++;
+        }
+        generateCalendar(currentYear, currentMonth);
+      });
+      
+      // Event modal functions
+      function openEventModal(date) {
+        const eventDateInput = document.getElementById('event-date');
+        if (date) {
+          eventDateInput.value = formatDate(date);
+        } else {
+          eventDateInput.value = formatDate(new Date());
+        }
+        eventModal.style.display = 'flex';
+        document.body.classList.add('no-scroll'); 
+      }
+      
+      function closeEventModal() {
+        eventModal.style.display = 'none';
+        eventForm.reset();
+        document.body.classList.remove('no-scroll'); 
+      }
+      
+      // Helper function to format date for input
+      function formatDate(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      }
+      
+      // Event modal buttons
+      openEventModalButton.addEventListener('click', function() {
+        openEventModal();
+      });
+      
+      closeModalButton.addEventListener('click', function() {
+        closeEventModal();
+      });
+      
+      cancelEventButton.addEventListener('click', function() {
+        closeEventModal();
+      });
+      
+      saveEventButton.addEventListener('click', function() {
+        const title = document.getElementById('event-title').value;
+        const dateValue = document.getElementById('event-date').value;
+        const category = document.getElementById('event-category').value;
+        const color = document.getElementById('event-color').value;
+        
+        if (title && dateValue && category && color) {
+          // Parse date
+          const dateParts = dateValue.split('-');
+          const eventDate = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+          
+          // Create new event
+          const newEvent = {
+            id: events.length + 1,
+            title: title,
+            date: eventDate,
+            category: category,
+            color: color
+          };
+          
+          // Add to events array
+          events.push(newEvent);
+          
+          // Regenerate calendar
+          generateCalendar(currentYear, currentMonth);
+          
+          // Close modal
+          closeEventModal();
+          
+          // Show success message
+          alert('Event added successfully!');
+        } else {
+          alert('Please fill in all required fields.');
+        }
+      });
+      
+      // Close modal if clicked outside
+      window.addEventListener('click', function(event) {
+        if (event.target === eventModal) {
+          closeEventModal();
+        }
+      });
+    });
+  </script>
+</body>
+</html>

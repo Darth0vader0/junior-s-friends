@@ -119,7 +119,7 @@
         <div class="textcontent">
             <h2>Welcome back!</h2>
             <p>Enter your login credentials.</p>
-            <form action="http://localhost:8000/login" method="post">
+            <form id="loginForm" action="" method="post">
                 <div>
                     <label for="username"><b>Enter Username</b></label>
                     <input type="text" id="username" name = "UserName" class="custom-input" placeholder="Username" required autocomplete="off">
@@ -127,6 +127,13 @@
                 <div>
                     <label for="otp">Enter Password</label>
                     <input type="password" id="otp" name = "password" class="custom-input" placeholder="Password" required>
+                </div>
+                <div>
+                    <label for="role">Select Role</label>
+                    <select id="role" name="role" class="custom-input" required>
+                        <option value="student">Student</option>
+                        <option value="admin">Admin</option>
+                    </select>
                 </div>
                 <input type="submit" value="login">
                 <a href="forgotpass.html">Forgot Password</a>
@@ -142,7 +149,41 @@
     </div>
    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
- 
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            // Get the form data
+            const formData = new FormData(this);
+            if (formData.get('role') === 'student') {
+                this.action = 'http://localhost:8000/login';
+            } else {
+                this.action = 'http://localhost:8000/loginAsAdmin';
+            }
+            // Send the form data using fetch
+            fetch(this.action, {
+                method: this.method,
+                body: new URLSearchParams({
+        UserName: formData.get('UserName'),
+        password: formData.get('password'),
+    }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Redirect to the dashboard or home page
+                        if (formData.get('role') === 'student') {
+                            window.location.href = '/home';
+                        } else {
+                            window.location.href = '/admin';
+                        }
+                    } else {
+                        alert('Login failed. Please check your credentials.');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        });
+    </script>
 </body>
 
 </html>

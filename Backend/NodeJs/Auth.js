@@ -24,7 +24,9 @@ const multer = require('multer');
 const jwt = require('jsonwebtoken')
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
+const bodyParser = require('body-parser');
 app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('../../public'));
 var con = sql.createConnection({
     host: "localhost",
@@ -355,7 +357,65 @@ app.post("/userData", (req, res) => {
     })
 })
 
+app.post('/events', (req, res) => {
+    const { title, date, time, location, description, category } = req.body;
+  
+    const sql = `INSERT INTO events (title, date, time, location, description, category) VALUES (?, ?, ?, ?, ?, ?)`;
+    con.query(sql, [title, date, time, location, description, category], (err, result) => {
+      if (err) {
+        console.error(err);
+        res.json({ success: false });
+      } else {
+        res.json({ success: true });
+      }
+    });
+  });
+  
+app.get('/getEvents',async (req,res)=>{
+    const query = 'SELECT * from events';
+    const events =  con.query("SELECT * FROM events ORDER by date,time", (err, result) => {
+        if (err) {
+            console.error('Error fetching events:', err);
+            res.status(500).json({ success: false, message: 'Database error' });
+          } else {
+            res.json({ success: true, events:result });
+          }
+        } 
+    );
+   
 
+})
+app.post('/loginAsAdmin',(req,res)=>{
+    const { UserName, password } = req.body;
+    console.log(UserName, password)
+     con.query('SELECT * FROM admin_users WHERE name = ? AND password = ?', [UserName, password], (err, results) => {
+
+        if (err) {
+            console.error('Error executing query:', err);
+            return res.status(500).json({ success: false, message: 'Database error' });
+        }
+        if (results.length > 0) {
+            console.log('Login successful:', results[0]);
+            // Successful login 
+             const userId = req.body.UserName;
+                    const token = jwt.sign({userId},"secretKey",{
+                        expiresIn:'10d'
+                        
+                         });
+                         res.cookie("jwt",token,{
+                            maxAge :10*24*60*60*1000,
+                            httpOnly:true,
+                        })
+                        
+            res.json({ success: true });
+        } else {
+            console.log('Invalid credentials:', UserName, password);
+            // Invalid credentials
+            res.json({ success: false });
+        }
+    }
+    );
+})
 
 // database connection 
 con.connect((err) => {
@@ -368,6 +428,10 @@ con.connect((err) => {
 // routes for url bar to enhance user experience 
 app.get("/login",(req,res)=>{
     res.sendFile("C:/Users/kamal/Desktop/dePrototype/public/login.html");
+
+})
+app.get("/admin",(req,res)=>{
+    res.sendFile("C:/Users/kamal/Desktop/dePrototype/public/adminDashboard.html");
 
 })
 app.get("/resources",(req,res)=>{

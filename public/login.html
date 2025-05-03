@@ -135,7 +135,15 @@
                         <option value="admin">Admin</option>
                     </select>
                 </div>
-                <input type="submit" value="login">
+               
+                <button onclick="
+                if(document.getElementById('role').value === 'admin') {
+                    document.getElementById('loginForm').action = 'http://localhost:8000/loginAsAdmin';
+                } else {
+                    document.getElementById('loginForm').action = 'http://localhost:8000/login';
+                }
+                document.getElementById('loginForm').submit();"
+                >login</button> <br>
                 <a href="forgotpass.html">Forgot Password</a>
                 <div>
                     <p><a href="signup.html">Don't have an account</a></p>
@@ -150,39 +158,40 @@
    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.getElementById('loginForm').addEventListener('submit', function (event) {
-            event.preventDefault(); // Prevent the default form submission
-
-            // Get the form data
-            const formData = new FormData(this);
-            if (formData.get('role') === 'student') {
-                this.action = 'http://localhost:8000/login';
-            } else {
-                this.action = 'http://localhost:8000/loginAsAdmin';
-            }
-            // Send the form data using fetch
-            fetch(this.action, {
-                method: this.method,
-                body: new URLSearchParams({
-        UserName: formData.get('UserName'),
-        password: formData.get('password'),
-    }),
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Redirect to the dashboard or home page
-                        if (formData.get('role') === 'student') {
-                            window.location.href = '/home';
-                        } else {
-                            window.location.href = '/admin';
-                        }
-                    } else {
-                        alert('Login failed. Please check your credentials.');
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-        });
+    //     document.getElementById('loginForm').addEventListener('submit', function (event) {
+    //         event.preventDefault(); // Prevent the default form submission
+    //         console.log('Form submitted');
+    //         // Get the form data
+    //         const formData = new FormData(this);
+    //         if (formData.get('role') !== 'student') {
+    //             this.action = 'http://localhost:8000/loginAsAdmin';
+    //         } 
+    //         // Send the form data using fetch
+    //         fetch('/login', {
+    //             method: this.method,
+    //             headers: {
+    //     'Content-Type': 'application/x-www-form-urlencoded',
+    // },
+    //             body: new URLSearchParams({
+    //     UserName: formData.get('UserName'),
+    //     password: formData.get('password'),
+    // }),
+    //         })
+    //             .then(response => response.json())
+    //             .then(data => {
+    //                 if (data.success) {
+    //                     // Redirect to the dashboard or home page
+    //                     if (formData.get('role') === 'student') {
+    //                         window.location.href = '/home';
+    //                     } else {
+    //                         window.location.href = '/admin';
+    //                     }
+    //                 } else {
+    //                     alert('Login failed. Please check your credentials.');
+    //                 }
+    //             })
+    //             .catch(error => console.error('Error:', error));
+    //     });
     </script>
 </body>
 

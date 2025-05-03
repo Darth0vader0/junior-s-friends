@@ -1,13 +1,6 @@
-let temSt  = {};
-let temSt2 = {};
-let temSt3 = {};
-let temSt4 = {};
-let temSt5 = {};
-let temSt6 = {};
-let temSt7 = {};
-let temSt8 = {};
-let temSt9 = {};
-let temSt10 = new Map();
+// A single in-memory store
+const otpTempStore = {}; // key = username
+
 const express = require('express');
 const cors = require('cors'); // Import CORS middleware
 const app = express();
@@ -45,101 +38,88 @@ app.get('/logout',(req,res)=>{
     res.redirect('/login')
 })
 
-app.post("/registration", (req, res) => {
-    let data = req.body;
-    let a = 0;
-    q = "select * from stu_registration where Username = ?;";
-    const x = [data.Username];
-    con.query(q, x, async (err, results) => {
-        if (err) {
-            console.log("error in registration : " + err);
-        }
-        else if (results.length == 0) {
-            let otp = Math.floor(100 + Math.random() * 900);
-            let res = "OTP " + otp + " Username " + x;
-            let mailTransporter =
-                nodemailer.createTransport(
-                    {
-                        service: 'gmail',
-                        auth: {
-                            user: '220170116016@vgecg.ac.in',
-                            pass: 'Bg@13572468'
-                        }
-                    }
-                );
-            let mailDetails = {
-                from: '220170116016@vgecg.ac.in',
-                to: data.StuEmail,
-                subject: "junior's friend website registration",
-                text: res
-            };
-            mailTransporter.sendMail(mailDetails,
-                function (err, data) {
-                    if (err) {
-                        console.log('Error Occurs' + err);
-                    } else {
-                        //  console.log('Email sent successfully');
-                    }
-                });
-            temSt[x] = data.StuName;
-            temSt2[x] = data.EnrollmentNo;
-            temSt3[x] = data.StuEmail;
-            temSt4[x] = data.Semester;
-            temSt5[x] = data.Department;
-            temSt6[x] = data.StuPhoto;
-            temSt7[x] = data.StuCity;
-            temSt8[x] = data.StuBirthdata;
-            temSt9[x] = otp;
-            temSt10[x] = data.Password;
-            a = 1;
-        }
-        if (a === 1) {
-            res.redirect('/otp');
+app.post("/registration", async (req, res) => {
+    const data = req.body;
+    const username = data.Username;
 
+    con.query("SELECT * FROM stu_registration WHERE Username = ?", [username], async (err, results) => {
+        if (err) return res.status(500).send("DB error");
+
+        if (results.length > 0) {
+            return res.send("Username already taken. Please choose another.");
         }
-        else {
-            res.send("username already taken please choose another");
-        }
-    })
-})
-app.post("/otp", (req, res) => {
-    let data = req.body;
-    let otp = data.otp;
-    let x = req.body.username;
-    let otp2 = temSt9[x];
-    if (otp == otp2) {
-        let data = [temSt[x], temSt2[x], temSt3[x], temSt4[x], temSt5[x], temSt6[x], temSt7[x], temSt8[x], x, temSt10[x]];
-        q = "insert into stu_registration(StuName,EnrollmentNo,StuEmail,Semester,Department,StuPhoto,StuCity,StuBirthDate,Username,Password) values(? , ? , ? , ? , ? , ? , ? , ? , ? , ?);";
-        con.query(q, data, (err) => {
-            if (err) {
-                console.log("error in inserting data " + err);
-            }
-            else {
-                delete temSt[x];
-                delete temSt2[x];
-                delete temSt3[x];
-                delete temSt4[x];
-                delete temSt5[x];
-                delete temSt6[x];
-                delete temSt7[x];
-                delete temSt8[x];
-                delete temSt9[x];
-                delete temSt10[x];
-                
-                //console.log(req.body);
+
+        const otp = Math.floor(100 + Math.random() * 900);
+        const emailBody = `OTP: ${otp} | Username: ${username}`;
+
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: '220170116016@vgecg.ac.in',
+                pass: 'miob tpsg xlyx ufpn'
             }
         });
-        //res.send("done");
-        res.redirect('/home')
-    }
-    else {
-        res.send("wrong otp or username");
-    }
-})
+
+        const mailDetails = {
+            from: '220170116016@vgecg.ac.in',
+            to: data.StuEmail,
+            subject: "Junior's Friend Website Registration",
+            text: emailBody
+        };
+
+        transporter.sendMail(mailDetails, (err) => {
+            if (err) 
+            {
+                console.log('Error Occurs' + err);
+                return res.status(500).send("Email sending failed");
+            }
+
+            // Save temporary data in unified store
+            otpTempStore[username] = {
+                otp,
+                data
+            };
+
+            res.redirect('/otp');
+        });
+    });
+});
+app.post("/otp", (req, res) => {
+    const { username, otp } = req.body;
+
+    const record = otpTempStore[username];
+    if (!record) return res.send("OTP expired or invalid username");
+
+    if (parseInt(otp) !== record.otp) return res.send("Wrong OTP");
+
+    const d = record.data;
+    const values = [
+        d.StuName, d.EnrollmentNo, d.StuEmail, d.Semester,
+        d.Department, d.StuPhoto, d.StuCity, d.StuBirthdata,
+        username, d.Password
+    ];
+
+    const q = `INSERT INTO stu_registration
+        (StuName, EnrollmentNo, StuEmail, Semester, Department, StuPhoto, StuCity, StuBirthDate, Username, Password)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
+    con.query(q, values, (err) => {
+        if (err) 
+        {
+            console.log("Error inserting data: ", err);
+            return res.status(500).send("Database insertion failed");
+        }
+
+        delete otpTempStore[username]; // clean up
+        res.redirect('/home');
+    });
+});
+
 app.post("/login", (req, res) => {
-    let data = [req.body.UserName];
+    const UserName = req.body.UserName;
+    const password = req.body.password;
     q = "SELECT * FROM stu_registration WHERE Username = ?";
-    con.query(q, data, (error, results) => {
+    con.query(q, UserName, (error, results) => {
         if (error) {
             console.log("error i login ", error);
         }
@@ -147,7 +127,7 @@ app.post("/login", (req, res) => {
             res.send("account not found(wrong username)");
         }
         else {
-            let data = [req.body.UserName, req.body.password];
+            const data = [UserName, password];
             q = "SELECT * FROM stu_registration WHERE Username = ? and Password= ?";
             con.query(q, data, (error, results) => {
                 if (error) {
@@ -326,7 +306,25 @@ app.post("/Fetch-comments", (req, res) => {
 })
 
 // user-profile redirect .
-
+app.get('/user',(req,res)=>{
+    const token = req.cookies.jwt;
+    const decodeJwt = jwt.verify(token, 'secretKey');
+    const userId = decodeJwt.userId;
+    if (!userId) {
+        return res.status(401).json({ message: 'Unauthorized' });
+    }
+    const sql2 = 'SELECT * FROM stu_registration WHERE Username = ?';
+    con.query(sql2, [userId], (err, result) => {
+        if (err) {
+            console.error('Error fetching data:', err);
+            res.status(500).json({ success: false, message: 'Database error' });
+        } else if (result.length === 0) {
+            res.status(401).json({ success: false, message: 'Unauthorized' });
+        } else {
+            res.json({ success: true, data: result[0] });
+        }
+    });
+})
 app.post("/userData", (req, res) => {
     const Username = req.body.username;
     if (!Username) {
@@ -357,6 +355,37 @@ app.post("/userData", (req, res) => {
     })
 })
 
+app.get('/adminData', (req, res) => {
+   const sql = 'SELECT * FROM stu_registration';
+   const token = req.cookies.jwt;
+   const decodeJwt = jwt.verify(token, 'secretKey');
+    const userId = decodeJwt.userId;
+    const data = {};
+    if (!userId) {
+        return res.status(401).json({ message: 'Unauthorized' });
+    }
+    const sql2 = 'SELECT * FROM admin_users WHERE name = ?';
+    con.query(sql2, [userId], (err, result) => {
+        if (err) {
+            console.error('Error fetching data:', err);
+            res.status(500).json({ success: false, message: 'Database error' });
+        } else if (result.length === 0) {
+            res.status(401).json({ success: false, message: 'Unauthorized' });
+        } else {
+         data.admin = result[0].name;
+        }
+    })
+
+    con.query(sql, (err, result) => {
+        if (err) {
+            console.error('Error fetching data:', err);
+            res.status(500).json({ success: false, message: 'Database error' });
+        } else {
+            data.users = result;
+            res.json({ success: true, data: data });
+        }
+    });   
+})
 app.post('/events', (req, res) => {
     const { title, date, time, location, description, category } = req.body;
   
@@ -406,8 +435,7 @@ app.post('/loginAsAdmin',(req,res)=>{
                             maxAge :10*24*60*60*1000,
                             httpOnly:true,
                         })
-                        
-            res.json({ success: true });
+            res.redirect('/admin')
         } else {
             console.log('Invalid credentials:', UserName, password);
             // Invalid credentials
@@ -441,6 +469,9 @@ app.get("/resources",(req,res)=>{
 
 app.get('/user-profile',(req,res)=>{
     res.sendFile("C:/Users/kamal/Desktop/dePrototype/public/profile.html");
+})
+app.get('/profile',(req,res)=>{
+    res.sendFile("C:/Users/kamal/Desktop/dePrototype/public/dashboard.html");
 })
 app.get("/home",(req,res)=>{
     res.sendFile("C:/Users/kamal/Desktop/dePrototype/public/home.html");

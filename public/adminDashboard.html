@@ -25,19 +25,11 @@
         <span>Profile</span>
       </div>
 
-      <div class="menu-item">
-        <span class="menu-icon"><i class="fa-solid fa-calendar-days"></i></span>
-        <span>Events</span>
-      </div>
+     
 
-      <div class="menu-item">
-        <span class="menu-icon"><i class="fa-solid fa-user-group"></i></span>
-        <span>Members</span>
-      </div>
-
-      <div class="menu-item">
+      <div class="menu-item" onclick="fetch('/logout') .then(() => window.location.href = '/login');">
         <span class="menu-icon"><i class="fa-solid fa-gear"></i></span>
-        <span>Settings</span>
+        <span>logout</span>
       </div>
     </div>
 
@@ -46,25 +38,25 @@
       <div class="header">
         <h1 class="page-title">Admin Profile</h1>
         <div class="admin-profile">
-          <div class="admin-avatar">SR</div>
-          <span>Sarah Robinson</span>
+          <div id="admin-avatar" class="admin-avatar">SR</div>
+          <span id="admin-name-header">Sarah Robinson</span>
         </div>
       </div>
 
       <!-- Profile Card -->
       <div class="card profile-card">
-        <div class="profile-avatar">SR</div>
+        <div class="profile-avatar" id="profile-avatar"></div>
         <div class="profile-details">
-          <h2 class="profile-name">Sarah Robinson</h2>
+          <h2 class="profile-name" id="profile-name"></h2>
           <p class="profile-role">Program Administrator</p>
 
           <div class="profile-stats">
             <div class="stat-item">
-              <div class="stat-value">24</div>
+              <div id="event-numbers" class="stat-value"></div>
               <div class="stat-label">Events Created</div>
             </div>
             <div class="stat-item">
-              <div class="stat-value">156</div>
+              <div id="members-number" class="stat-value"></div>
               <div class="stat-label">Members</div>
             </div>
             <div class="stat-item">
@@ -180,7 +172,7 @@
 
       // Sample events data
       let events = [
-        ];
+      ];
 
       // DOM elements
       const calendarBody = document.getElementById('calendar-body');
@@ -198,28 +190,28 @@
       function generateCalendar(year, month) {
         // Clear previous calendar
         calendarBody.innerHTML = '';
-        
+
         // Update header
         const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
         currentMonthElement.textContent = `${monthNames[month]} ${year}`;
-        
+
         // Get first day of month and total days
         const firstDay = new Date(year, month, 1).getDay();
         const totalDays = new Date(year, month + 1, 0).getDate();
-        
+
         // Calculate needed rows
         const rows = Math.ceil((firstDay + totalDays) / 7);
-        
+
         let date = 1;
-        
+
         // Generate rows and cells
         for (let i = 0; i < rows; i++) {
           const row = document.createElement('tr');
-          
+
           // Generate 7 cells for each row
           for (let j = 0; j < 7; j++) {
             const cell = document.createElement('td');
-            
+
             if (i === 0 && j < firstDay) {
               // Empty cells before the first day
               cell.classList.add('empty-day');
@@ -234,23 +226,23 @@
               dayNumber.classList.add('day-number');
               dayNumber.textContent = date;
               cell.appendChild(dayNumber);
-              
+
               // Check if any events are on this day
               const dayEvents = events.filter(event => {
-                return event.date.getDate() === date && 
-                       event.date.getMonth() === month && 
-                       event.date.getFullYear() === year;
+                return event.date.getDate() === date &&
+                  event.date.getMonth() === month &&
+                  event.date.getFullYear() === year;
               });
-              
+
               // Add event dots if there are events
               if (dayEvents.length > 0) {
                 const eventDotsContainer = document.createElement('div');
                 eventDotsContainer.classList.add('event-dots');
-                
+
                 // Create tooltip for events
                 const tooltip = document.createElement('div');
                 tooltip.classList.add('event-tooltip');
-                
+
                 // Add event info to tooltip
                 dayEvents.forEach(event => {
                   const tooltipEvent = document.createElement('div');
@@ -261,51 +253,51 @@
                   tooltipEvent.textContent = event.title;
                   tooltip.appendChild(tooltipEvent);
                 });
-                
+
                 // Add tooltip to cell
                 cell.appendChild(tooltip);
-                
+
                 // Add event dots (max 3 dots)
                 const maxDots = Math.min(dayEvents.length, 3);
                 for (let d = 0; d < maxDots; d++) {
                   const dot = document.createElement('div');
                   dot.classList.add('event-dot');
-                  
+
                   // Use the color of the event for the dot
                   if (dayEvents[d].color === 'orange') {
                     dot.classList.add('orange');
                   }
-                  
+
                   eventDotsContainer.appendChild(dot);
                 }
-                
+
                 cell.appendChild(eventDotsContainer);
-                
+
                 // Show tooltip on hover
-                cell.addEventListener('mouseenter', function() {
+                cell.addEventListener('mouseenter', function () {
                   tooltip.style.display = 'block';
                   tooltip.style.cursor = 'pointer';
-                  tooltip.onclick = function(){
+                  tooltip.onclick = function () {
                     alert('Event Details:\n' + dayEvents.map(event => `${event.title} - ${event.date.toLocaleDateString()}`).join('\n'));
                   }
                 });
-                
-                
-                cell.addEventListener('mouseleave', function() {
+
+
+                cell.addEventListener('mouseleave', function () {
                   tooltip.style.display = 'none';
                 });
               }
-              
+
               // Add cell click handler to add event
-           
-              
+
+
               row.appendChild(cell);
               date++;
             }
           }
-          
+
           calendarBody.appendChild(row);
-          
+
           // Stop generating rows if we've used all dates
           if (date > totalDays) {
             break;
@@ -313,27 +305,46 @@
         }
       }
       async function fetchEvents() {
-  try {
-    const response = await fetch('/getEvents'); // Replace with actual API endpoint
-    const data = await response.json();
-    console.log(data); // Log the fetched data for debugging
+        try {
+          const response = await fetch('/getEvents'); // Replace with actual API endpoint
+          const data = await response.json();
+          console.log(data); // Log the fetched data for debugging
 
-    // Parse date strings to Date objects
-    events = data.events.map(event => ({
-      ...event,
-      date: new Date(event.date)
-    }));
+          // Parse date strings to Date objects
+          events = data.events.map(event => ({
+            ...event,
+            date: new Date(event.date)
+          }));
 
-    generateCalendar(currentYear, currentMonth); // Re-render with events
-  } catch (error) {
-    console.error('Failed to load events:', error);
-  }
-}
+          generateCalendar(currentYear, currentMonth); // Re-render with events
+        } catch (error) {
+          console.error('Failed to load events:', error);
+        }
+      }
 
 
       // Initialize calendar
       fetchEvents(); // Fetch events from server
 
+      async function fetchAdminData() {
+        try {
+          const response = await fetch('/adminData'); // Replace with actual API endpoint
+          const data = await response.json();
+          console.log(data); // Log the fetched data for debugging
+
+          // Update event numbers in the profile card
+          document.getElementById('event-numbers').textContent = events.length;
+          document.getElementById('members-number').textContent = data.data.users.length;
+          document.getElementById('profile-name').textContent = data.data.admin; // Assuming the first user is the admin
+          document.getElementById('admin-name-header').textContent = data.data.admin; // Assuming the first user is the admin
+          document.getElementById('admin-avatar').textContent = data.data.admin.charAt(0).toUpperCase(); // Initials for avatar
+          document.getElementById('admin-avatar').style.backgroundColor = '#FFA500'; // Orange background for admin
+          document.getElementById('profile-avatar').textContent=data.data.admin.slice(0,1).toUpperCase(); // White text color for initials
+        } catch (error) {
+          console.error('Failed to load event numbers:', error);
+        }
+      }
+      fetchAdminData();
       // Previous month button
       prevMonthButton.addEventListener('click', function () {
         currentMonth--;
@@ -410,7 +421,7 @@
           },
           body: JSON.stringify(formData)
         })
-          
+
         const response = await result.json()
         if (response.success) {
           closeEventModal();
@@ -430,6 +441,7 @@
         }
       });
     });
+
   </script>
 </body>
 

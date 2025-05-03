@@ -149,7 +149,7 @@ function redirectToUserProfile(commentUsername) {
   const username = commentUsername.textContent;
   console.log(username);
   localStorage.setItem('commentUsername', username);
-  window.location.href = '/user-profile';
+  window.location.href = 'profile.html';
 }
 
 

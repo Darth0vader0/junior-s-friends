@@ -28,7 +28,11 @@
                         <a class="nav-link" href="aboutus.html">Contact</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="dashboard.html">dashboard</a>
+                        <a class="nav-link" onclick="if (window.localStorage.getItem('role') == 'admin') {
+                            window.location.href = 'adminDashboard.html';
+                        } else {
+                            window.location.href = 'dashboard.html';
+                        }">dashboard</a>
                     </li>
                     <li>
                     
@@ -218,11 +222,30 @@ if(result.msg=== 'no'){
 
 // Add event listener to the button
 logBtn.addEventListener('click', () => {
-    if (logBtn.innerText == 'login') {
-    window.location.href='/login'
+    console.log(logBtn.innerText);
+    if (logBtn.innerText == 'LOGIN') {
+    window.location.href='login.html'
         
     } else {
-    window.location.href='/logout'
+        if (window.localStorage.getItem('role') == 'admin') {
+            window.localStorage.removeItem('role');
+        } 
+        // Perform logout action
+        fetch('http://localhost:8000/logout', {
+            method: 'get',
+            credentials: 'include'
+        })
+        .then(response => {
+            if (response.ok) {
+                // Redirect to login page after successful logout
+                window.location.href = 'login.html';
+            } else {
+                console.error('Logout failed');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
         
     }
 

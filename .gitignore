@@ -1,3 +1,5 @@
 
 Backend/NodeJs/node_modules/
+Backend-folder/node_modules/
 .vscode
+Backend-folder/.env

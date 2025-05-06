@@ -118,7 +118,7 @@ app.post("/Fetch-comments", (req, res) => {
         return res.status(400).json({ message: 'something is missing' });
     }
     // fetch comments order by last most recent comment first
-    const sql = `SELECT * ,CONVERT_TZ(Time, '+00:00', '+05:30') AS created_at_local FROM Comments WHERE BookID = ? AND PostedBy= ? ORDER BY Time DESC;`;
+    const sql = `SELECT * ,CONVERT_TZ(Time, '+00:00', '+05:30') AS created_at_local FROM comments WHERE BookID = ? AND PostedBy= ? ORDER BY Time DESC;`;
     con.query(sql, [BookID,PostedBy], (err, result) => {
         if (err) {
             console.log(err);
@@ -280,35 +280,36 @@ app.post('/loginAsAdmin',(req,res)=>{
 
 // routes for url bar to enhance user experience 
 app.get("/login",(req,res)=>{
-    res.sendFile("C:/Users/kamal/Desktop/dePrototype/public/login.html");
+    res.sendFile(path.join(__dirname ,"../public/login.html")); // Send results as JSON
 
 })
 app.get("/admin",(req,res)=>{
-    res.sendFile("C:/Users/kamal/Desktop/dePrototype/public/adminDashboard.html");
+    res.sendFile(path.join(__dirname ,"../public/adminDasboard.html")); // Send results as JSON
 
 })
 app.get("/resources",(req,res)=>{
-    res.sendFile("C:/Users/kamal/Desktop/dePrototype/public/books.html"); // Send results as JSON
+    res.sendFile(path.join(__dirname ,"../public/resources.html")); // Send results as JSON
 
 })
 
 app.get('/user-profile',(req,res)=>{
-    res.sendFile("C:/Users/kamal/Desktop/dePrototype/public/profile.html");
+    res.sendFile(path.join(__dirname, '../public/profile.html'));
 })
 app.get('/profile',(req,res)=>{
-    res.sendFile("C:/Users/kamal/Desktop/dePrototype/public/dashboard.html");
+    res.sendFile(path.join(__dirname, '../public/dashboard.html'));
 })
 app.get("/home",(req,res)=>{
-    res.sendFile("C:/Users/kamal/Desktop/dePrototype/public/home.html");
+    res.sendFile(path.join(__dirname, '../public/home.html'));
 
 })
-app.get("/post",(req,res)=>{
-    res.sendFile("C:/Users/kamal/Desktop/dePrototype/public/post_book.html");
-})
+
 app.get("/otp",(req,res)=>{
-    res.sendFile("C:/Users/kamal/Desktop/dePrototype/public/otp.html")
+    res.sendFile(path.join(__dirname, '../public/otp.html'));
 });
-
+app.get('/post',( req, res) => {
+    res.sendFile(path.join(__dirname, '../public/post_book.html'));
+}
+)
 
 app.listen(port, () => {
     console.log("server start on port " + port);

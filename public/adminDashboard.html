@@ -27,7 +27,10 @@
 
      
 
-      <div class="menu-item" onclick="fetch('/logout') .then(() => window.location.href = '/login');">
+      <div class="menu-item" onclick="fetch('/logout') .then(() =>{
+        window.localStorage.removeItem('role');
+        window.location.href = 'login.html';
+      })">
         <span class="menu-icon"><i class="fa-solid fa-gear"></i></span>
         <span>logout</span>
       </div>
